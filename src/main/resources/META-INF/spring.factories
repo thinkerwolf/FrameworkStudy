@@ -1,0 +1,6 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.example.demo.autoconfig.HelloAutoConfiguration,\
+															com.example.demo.autoconfig.RpcAutoConfiguration,\
+															com.example.demo.autoconfig.MessageSourceAutoConfiguration,\
+															com.example.demo.autoconfig.SendMailEventAutoConfig
+org.springframework.boot.env.EnvironmentPostProcessor=com.example.demo.processor.LocalFileEnvironmentPostProcessor
+org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor=com.regin.rpc.processor.RpcBeanDefinitionRegistryProcessor

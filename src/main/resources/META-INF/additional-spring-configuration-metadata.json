@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "hello.suffix",
+    "type": "java.lang.String",
+    "description": "A description for 'hello.suffix'"
+  },
+  {
+    "name": "org.springframework.boot.autoconfigure.EnableAutoConfiguration",
+    "type": "java.lang.String",
+    "description": "A description for 'org.springframework.boot.autoconfigure.EnableAutoConfiguration'"
+  },
+  {
+    "name": "org.springframework.boot.env.EnvironmentPostProcessor",
+    "type": "java.lang.String",
+    "description": "A description for 'org.springframework.boot.env.EnvironmentPostProcessor'"
+  }
+]}

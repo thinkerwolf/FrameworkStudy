@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<context id="context1" defaultModelType="hierarchical"
+		targetRuntime="MyBatis3">
+		<property name="autoDelimitKeywords" value="false" />
+		<!-- 生成的Java文件的编码 -->
+		<property name="javaFileEncoding" value="UTF-8" />
+		<!-- 格式化java代码 -->
+		<property name="javaFormatter"
+			value="org.mybatis.generator.api.dom.DefaultJavaFormatter" />
+		<!-- 格式化XML代码 -->
+		<property name="xmlFormatter"
+			value="org.mybatis.generator.api.dom.DefaultXmlFormatter" />
+
+		<jdbcConnection
+			connectionURL="jdbc:mysql://localhost/test?serverTimezone=Asia/Shanghai&amp;useUnicode=true&amp;characterEncoding=utf8"
+			driverClass="com.mysql.cj.jdbc.Driver" password="123" userId="root" />
+		
+		<javaModelGenerator targetPackage="com.example.demo.mybatis.domain"
+			targetProject="SpringDeshboard">
+			<property name="enableSubPackages" value="false" />
+		</javaModelGenerator>
+		
+		<sqlMapGenerator targetPackage="db.mybatis.mapper"
+			targetProject="SpringDeshboard" />
+			
+		<javaClientGenerator targetPackage="com.example.demo.mybatis.dao"
+			targetProject="SpringDeshboard" type="XMLMAPPER">
+			<property name="enableSubPackages" value="false" />
+		</javaClientGenerator>
+		<table schema="" tableName="blog">
+		</table>
+	</context>
+</generatorConfiguration>

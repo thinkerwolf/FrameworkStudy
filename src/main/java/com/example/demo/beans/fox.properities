@@ -1,0 +1,4 @@
+provider.(class)=com.example.demo.beans.NewsProvider
+foxSource.(class)=com.example.demo.beans.FoxNewsSource
+
+provider.$0(ref)=foxSource
