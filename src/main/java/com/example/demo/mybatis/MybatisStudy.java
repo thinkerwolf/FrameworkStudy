@@ -15,10 +15,11 @@ import com.example.demo.mybatis.domain.Blog;
 public class MybatisStudy {
 	public static void main(String[] args) throws Exception {
 		String resource = "db/mybatis/mybatis.xml";
+		
 		InputStream is = Resources.getResourceAsStream(resource);
 		SqlSessionFactory ssf = new SqlSessionFactoryBuilder().build(is);
-		SqlSession session = ssf.openSession();
-		try {
+		
+		try (SqlSession session = ssf.openSession()) {
 			session.select("com.example.demo.mybatis.dao.BlogMapper.selectByPrimaryKey", 1, new ResultHandler<Blog>() {
 				@Override
 				public void handleResult(ResultContext<? extends Blog> resultContext) {
@@ -30,8 +31,6 @@ public class MybatisStudy {
 			Blog r = blogMapper.selectOneBlog(2);
 			System.out.println(r.getContent());
 			session.commit();
-		} finally {
-			session.close();
 		}
 
 	}
