@@ -19,12 +19,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.example.demo.autoconfig.MessageSourceAutoConfiguration;
-import com.example.demo.autoconfig.SendMailEventAutoConfig;
-import com.example.demo.event.SendMailService;
-import com.example.demo.service.HelloProperties;
-import com.example.demo.service.HelloService;
-import com.example.demo.service.HelloServiceImpl;
+import com.thinkerwolf.frameworkstudy.autoconfig.MessageSourceAutoConfiguration;
+import com.thinkerwolf.frameworkstudy.autoconfig.SendMailEventAutoConfig;
+import com.thinkerwolf.frameworkstudy.event.SendMailService;
+import com.thinkerwolf.frameworkstudy.service.HelloProperties;
+import com.thinkerwolf.frameworkstudy.service.HelloService;
+import com.thinkerwolf.frameworkstudy.service.HelloServiceImpl;
 
 import io.netty.channel.Channel;
 

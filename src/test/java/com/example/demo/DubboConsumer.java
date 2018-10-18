@@ -2,7 +2,7 @@ package com.example.demo;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.example.demo.service.HelloService;
+import com.thinkerwolf.frameworkstudy.service.HelloService;
 
 public class DubboConsumer {
 

@@ -7,7 +7,7 @@
 	<properties>
 		<property name="mysql.driver" value="com.mysql.cj.jdbc.Driver" />
 		<property name="mysql.url"
-			value="jdbc:mysql://localhost/test?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=UTC" />
+			value="jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=UTC" />
 		<property name="mysql.username" value="root" />
 		<property name="mysql.password" value="123" />
 	</properties>
@@ -38,7 +38,8 @@
 	
 	<environments default="development">
 		<environment id="development">
-			<transactionManager type="JDBC" />
+			<transactionManager type="JDBC" >
+			</transactionManager>
 			<dataSource type="POOLED">
 				<property name="driver" value="${mysql.driver}" />
 				<property name="url" value="${mysql.url}" />
