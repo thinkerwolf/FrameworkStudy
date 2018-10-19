@@ -20,7 +20,7 @@ public class MybatisStudy {
 		SqlSessionFactory ssf = new SqlSessionFactoryBuilder().build(is);
 		
 		try (SqlSession session = ssf.openSession()) {
-			session.select("com.example.demo.mybatis.dao.BlogMapper.selectByPrimaryKey", 1, new ResultHandler<Blog>() {
+			session.select("com.thinkerwolf.frameworkstudy.mybatis.dao.BlogMapper.selectByPrimaryKey", 1, new ResultHandler<Blog>() {
 				@Override
 				public void handleResult(ResultContext<? extends Blog> resultContext) {
 					System.out.println(resultContext.getResultObject());
@@ -28,7 +28,7 @@ public class MybatisStudy {
 			});
 
 			BlogMapper blogMapper = session.getMapper(BlogMapper.class);
-			Blog r = blogMapper.selectOneBlog(2);
+			Blog r = blogMapper.selectOneBlog(1);
 			System.out.println(r.getContent());
 			session.commit();
 		}
