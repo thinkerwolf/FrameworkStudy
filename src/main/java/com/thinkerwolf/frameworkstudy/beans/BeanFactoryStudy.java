@@ -19,7 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 
 public class BeanFactoryStudy {
 
-	public static enum BuildType {
+	public enum BuildType {
 		CODE, PROPERITIES, XML, ANNOTATION
 	}
 
