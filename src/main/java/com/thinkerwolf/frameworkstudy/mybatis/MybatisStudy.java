@@ -26,7 +26,6 @@ public class MybatisStudy {
 					System.out.println(resultContext.getResultObject());
 				}
 			});
-
 			BlogMapper blogMapper = session.getMapper(BlogMapper.class);
 			Blog r = blogMapper.selectOneBlog(1);
 			System.out.println(r.getContent());

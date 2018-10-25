@@ -1,9 +1,14 @@
-package com.example.demo;
+package com.thinkerwolf.frameworkstudy;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.thinkerwolf.frameworkstudy.autoconfig.MessageSourceAutoConfiguration;
 import com.thinkerwolf.frameworkstudy.autoconfig.SendMailEventAutoConfig;
+import com.thinkerwolf.frameworkstudy.autoconfig.TransactionConfiguration;
 import com.thinkerwolf.frameworkstudy.event.SendMailService;
 import com.thinkerwolf.frameworkstudy.service.HelloProperties;
 import com.thinkerwolf.frameworkstudy.service.HelloService;
@@ -28,7 +34,6 @@ import com.thinkerwolf.frameworkstudy.service.HelloServiceImpl;
 
 import io.netty.channel.Channel;
 
-@SuppressWarnings("unused")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DemoApplicationTests {
@@ -36,7 +41,7 @@ public class DemoApplicationTests {
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(UserAutoConfiguration.class, MessageSourceAutoConfiguration.class,
 					// RpcAutoConfiguration.class,
-					SendMailEventAutoConfig.class));
+					TransactionConfiguration.class, SendMailEventAutoConfig.class));
 
 	@Test
 	public void contextLoads() {
@@ -78,9 +83,28 @@ public class DemoApplicationTests {
 	 */
 
 	@Test
-	public void rpc() {
+	public void transaction() {
+		// 只使用原生jta去执行分布式事务
 		contextRunner.run(context -> {
-		
+			DataSource ds1 = (DataSource) context.getBean("ds1");
+			DataSource ds2 = (DataSource) context.getBean("ds2");
+			TransactionManager userTm = (TransactionManager) context.getBean("userTm");
+			userTm.begin();
+			try {
+				Connection conn1 = ds1.getConnection();
+				Connection conn2 = ds2.getConnection();
+				conn1.prepareStatement("UPDATE blog SET title = 'jta_4', content = 'jta test_3' WHERE id = 3")
+						.execute();
+//				if (conn1 != null) {
+//					throw new SQLException("xx");
+//				}
+				conn2.prepareStatement("UPDATE blog SET title = 'jta_4', content = 'jta test_3' WHERE id = 3")
+						.execute();
+				userTm.commit();
+			} catch (Throwable t) {
+				t.printStackTrace();
+				userTm.rollback();
+			}
 		});
 	}
 

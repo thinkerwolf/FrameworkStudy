@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.thinkerwolf.frameworkstudy;
 
 import java.io.IOException;
 
