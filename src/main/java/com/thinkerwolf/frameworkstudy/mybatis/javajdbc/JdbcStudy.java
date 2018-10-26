@@ -1,7 +1,7 @@
 package com.thinkerwolf.frameworkstudy.mybatis.javajdbc;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,9 +17,17 @@ public class JdbcStudy {
 		DataSource dataSource = new DriverManagerDataSource(url, "root", "123");
 		Connection conn = dataSource.getConnection();
 		conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+		
 		PreparedStatement ps = conn.prepareStatement("select * from blog where id = ?");
-		ps.setInt(1, 1);
+		// 抽象
+		ps.setObject(1, 1, JDBCType.INTEGER);
+		
+		
 		ResultSet rs = ps.executeQuery();
+		System.out.println(rs.getMetaData().getColumnCount());
+		while (rs.next()) {
+			rs.getObject(1);
+		}
 		while (rs.next()) {
 			rs.getInt(1);
 		}
