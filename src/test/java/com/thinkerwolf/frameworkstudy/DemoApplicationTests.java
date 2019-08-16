@@ -93,13 +93,14 @@ public class DemoApplicationTests {
 			try {
 				Connection conn1 = ds1.getConnection();
 				Connection conn2 = ds2.getConnection();
-				conn1.prepareStatement("UPDATE blog SET title = 'jta_4', content = 'jta test_3' WHERE id = 3")
-						.execute();
+                conn1.prepareStatement("UPDATE blog SET title = 'jta_88', content = 'jta test_5' WHERE id = 3")
+                        .execute();
 //				if (conn1 != null) {
 //					throw new SQLException("xx");
 //				}
-				conn2.prepareStatement("UPDATE blog SET title = 'jta_4', content = 'jta test_3' WHERE id = 3")
-						.execute();
+                conn1.prepareStatement("SELECT * from blog").executeQuery();
+                conn2.prepareStatement("UPDATE blog SET title = 'jta_99', content = 'jta test_6' WHERE id = 3")
+                        .execute();
 				userTm.commit();
 			} catch (Throwable t) {
 				t.printStackTrace();

@@ -23,12 +23,14 @@ public class TransactionConfiguration {
 		AtomikosDataSourceBean atomikosDataSourceBean = new AtomikosDataSourceBean();
 		atomikosDataSourceBean.setUniqueResourceName("db1");
 		atomikosDataSourceBean.setXaDataSourceClassName("com.mysql.cj.jdbc.MysqlXADataSource");
-		Properties properties = new Properties();
+        atomikosDataSourceBean.setMinPoolSize(2);
+        atomikosDataSourceBean.setMaxPoolSize(4);
+        Properties properties = new Properties();
 		properties.put("URL",
 				"jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC");
 		properties.put("user", "root");
-		properties.put("password", "123");
-		atomikosDataSourceBean.setXaProperties(properties);
+        properties.put("password", "1234");
+        atomikosDataSourceBean.setXaProperties(properties);
 		return atomikosDataSourceBean;
 	}
 
@@ -37,12 +39,14 @@ public class TransactionConfiguration {
 		AtomikosDataSourceBean atomikosDataSourceBean = new AtomikosDataSourceBean();
 		atomikosDataSourceBean.setUniqueResourceName("db2");
 		atomikosDataSourceBean.setXaDataSourceClassName("com.mysql.cj.jdbc.MysqlXADataSource");
-		Properties properties = new Properties();
+        atomikosDataSourceBean.setMinPoolSize(2);
+        atomikosDataSourceBean.setMaxPoolSize(4);
+        Properties properties = new Properties();
 		properties.put("URL",
 				"jdbc:mysql://localhost:3306/test1?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC");
 		properties.put("user", "root");
-		properties.put("password", "123");
-		atomikosDataSourceBean.setXaProperties(properties);
+        properties.put("password", "1234");
+        atomikosDataSourceBean.setXaProperties(properties);
 		return atomikosDataSourceBean;
 	}
 
