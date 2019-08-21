@@ -17,19 +17,19 @@ public class JdbcStudy {
 		DataSource dataSource = new DriverManagerDataSource(url, "root", "123");
 		Connection conn = dataSource.getConnection();
 		conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-		
+
 		PreparedStatement ps = conn.prepareStatement("select * from blog where id = ?");
 		// 抽象
 		ps.setObject(1, 1, JDBCType.INTEGER);
-		
-		
+
 		ResultSet rs = ps.executeQuery();
 		System.out.println(rs.getMetaData().getColumnCount());
 		while (rs.next()) {
-			rs.getObject(1);
+			System.out.println(rs.getObject(1));
 		}
+		rs.absolute(0);
 		while (rs.next()) {
-			rs.getInt(1);
+			System.out.println(rs.getInt(1));
 		}
 		conn.close();
 	}

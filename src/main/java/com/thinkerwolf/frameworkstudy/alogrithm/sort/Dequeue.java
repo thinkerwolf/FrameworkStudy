@@ -1,11 +1,6 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.sort;
 
-import io.netty.util.CharsetUtil;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.ClassPathResource;
-
-import java.io.IOException;
-import java.util.List;
+import com.thinkerwolf.frameworkstudy.alogrithm.Util;
 
 import static com.thinkerwolf.frameworkstudy.alogrithm.Util.*;
 
@@ -28,8 +23,6 @@ public class Dequeue {
                 }
                 moveQueue(a, i);
             }
-            int t = 1;
-            t++;
         }
     }
 
@@ -43,15 +36,8 @@ public class Dequeue {
     }
 
     public static void main(String[] args) {
-        ClassPathResource r = new ClassPathResource("words.txt");
-        try {
-            List<String> ls = IOUtils.readLines(r.getInputStream(), CharsetUtil.UTF_8);
-            String[] ss = new String[ls.size()];
-            ls.toArray(ss);
-            sort(ss);
-            show(ss);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Comparable[] ss = Util.randomArray(10);
+        sort(ss);
+        show(ss);
     }
 }

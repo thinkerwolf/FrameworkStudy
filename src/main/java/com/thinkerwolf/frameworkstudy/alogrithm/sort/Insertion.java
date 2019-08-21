@@ -26,7 +26,7 @@ import static com.thinkerwolf.frameworkstudy.alogrithm.Util.*;
 public class Insertion {
     public static final void sort(Comparable[] a) {
         int N = a.length;
-        Set<Integer> set = new HashSet<>();
+        Set <Integer> set = new HashSet <>();
         for (int i = 1; i < N; i++) {
             set.clear();
             for (int j = i; j > 0 && less(a[j], a[j - 1]); j--) {
@@ -44,7 +44,7 @@ public class Insertion {
         }
     }
 
-    private static void drawArr(Comparable[] a, Set<Integer> set) {
+    private static void drawArr(Comparable[] a, Set <Integer> set) {
         StdDraw.clear();
         StdDraw.setPenColor(Color.GRAY);
         for (int i = 0; i < a.length; i++) {
