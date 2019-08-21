@@ -4,8 +4,12 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
+/**
+ * @author wukai
+ */
 public class Util {
 
     private static final String CHARSET_NAME = "UTF-8";
@@ -30,6 +34,10 @@ public class Util {
 
     public static final boolean equal(Comparable v, Comparable w) {
         return v.compareTo(w) == 0;
+    }
+
+    public static final boolean equal(Object v, Object w) {
+        return Objects.equals(v, w);
     }
 
     public static final void exch(Comparable[] arr, int i, int j) {

@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 /**
  * 检查堆
+ * @author wukai
  */
 public class CheckHeap {
 

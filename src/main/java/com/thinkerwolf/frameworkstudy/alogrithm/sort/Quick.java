@@ -6,9 +6,10 @@ import static com.thinkerwolf.frameworkstudy.alogrithm.Util.*;
 
 public class Quick {
 
-    public static void sort(Comparable[] a) {
+    public static Comparable[] sort(Comparable[] a) {
         StdRandom.shuffle(a);
         sort(a, 0, a.length - 1);
+        return a;
     }
 
     public static void sort(Comparable[] a, int lo, int hi) {
