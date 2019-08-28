@@ -3,9 +3,12 @@ package com.thinkerwolf.frameworkstudy.alogrithm.table;
 import com.thinkerwolf.frameworkstudy.alogrithm.ST;
 
 import java.io.Serializable;
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
- * 符号表的无序链表实现，效率比较低
+ * 无序链表实现的符号表，效率比较低
  *
  * @param <K>
  * @param <V>
@@ -99,6 +102,101 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
     }
 
     @Override
+    public Collection <K> keys() {
+        return new Keys();
+    }
+
+    @Override
+    public Collection <V> values() {
+        return new Values();
+    }
+
+    class Keys extends AbstractCollection <K> {
+
+        @Override
+        public Iterator <K> iterator() {
+            return new KeysIterator(head);
+        }
+
+        @Override
+        public int size() {
+            return SequentialSearchST.this.size();
+        }
+    }
+
+    class KeysIterator implements Iterator <K> {
+        Entry <K, V> entry;
+
+        public KeysIterator(Entry <K, V> entry) {
+            this.entry = entry;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return entry != null;
+        }
+
+        @Override
+        public K next() {
+            Entry <K, V> en = entry;
+            entry = en.next;
+            return en.getKey();
+        }
+
+        @Override
+        public void remove() {
+            if (hasNext()) {
+                SequentialSearchST.this.delete(entry.getKey());
+                entry = entry.next;
+            }
+        }
+    }
+
+    class Values extends AbstractCollection <V> {
+
+        @Override
+        public Iterator <V> iterator() {
+            return new ValueIterator(head);
+        }
+
+        @Override
+        public int size() {
+            return SequentialSearchST.this.size();
+        }
+
+    }
+
+    class ValueIterator implements Iterator <V> {
+
+        Entry <K, V> entry;
+
+        public ValueIterator(Entry <K, V> entry) {
+            this.entry = entry;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return entry != null;
+        }
+
+        @Override
+        public V next() {
+            Entry <K, V> en = entry;
+            entry = en.next;
+            return en.getValue();
+        }
+
+        @Override
+        public void remove() {
+            if (hasNext()) {
+                SequentialSearchST.this.delete(entry.getKey());
+                entry = entry.next;
+            }
+        }
+    }
+
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("{");
         Entry <K, V> en = head;
@@ -124,7 +222,7 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
             this(key, value, null);
         }
 
-        Entry(K key, V value, Entry next) {
+        Entry(K key, V value, Entry<K, V> next) {
             this.key = key;
             this.value = value;
             this.next = next;
@@ -165,7 +263,7 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
     }
 
     public static void main(String[] args) {
-        SequentialSearchST <Integer, String> st = new SequentialSearchST <>();
+        ST <Integer, String> st = new SequentialSearchST <>();
         st.put(1, "A");
         st.put(2, "B");
         st.put(100, "C");
@@ -173,6 +271,14 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
         System.out.println(st.get(100));
         System.out.println(st.get(2));
         System.out.println(st.get(90));
+
+        for (Integer k : st.keys()) {
+            System.out.println("iterator key -> " + k);
+        }
+
+        for (String v : st.values()) {
+            System.out.println("iterator value -> " + v);
+        }
 
         //System.out.println(st.delete(100));
         System.out.println(st.delete(1));

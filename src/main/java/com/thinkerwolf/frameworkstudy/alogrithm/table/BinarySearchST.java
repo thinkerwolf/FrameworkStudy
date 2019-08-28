@@ -2,11 +2,10 @@ package com.thinkerwolf.frameworkstudy.alogrithm.table;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.ST;
 
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
 /**
- * 二分法搜索的有序查找表
+ * 有序查找表（二分查找）实现的符号表
  *
  * @param <K>
  * @param <V>
@@ -23,7 +22,8 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
      * val数组
      */
     private V[] vals;
-    /**'
+    /**
+     * '
      * 查找表大小
      */
     private int size;
@@ -98,6 +98,104 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         return size <= 0;
     }
 
+    @Override
+    public Collection <K> keys() {
+        return new Keys();
+    }
+
+    @Override
+    public Collection <V> values() {
+        return new Values();
+    }
+
+    class Keys extends AbstractCollection <K> {
+
+        @Override
+        public Iterator <K> iterator() {
+            return new KeysIterator(keys);
+        }
+
+        @Override
+        public int size() {
+            return BinarySearchST.this.size();
+        }
+    }
+
+    class KeysIterator implements Iterator <K> {
+
+        int cursor;
+        K[] keys;
+
+        KeysIterator(K[] keys) {
+            this.keys = keys;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cursor != size;
+        }
+
+        @Override
+        public K next() {
+            if (cursor >= size) {
+                throw new NoSuchElementException();
+            }
+            return keys[cursor++];
+        }
+
+        @Override
+        public void remove() {
+            if (hasNext()) {
+                BinarySearchST.this.delete(next());
+                cursor--;
+            }
+        }
+    }
+
+    class Values extends AbstractCollection <V> {
+
+        @Override
+        public Iterator <V> iterator() {
+            return new ValueIterator(keys, vals);
+        }
+
+        @Override
+        public int size() {
+            return BinarySearchST.this.size();
+        }
+    }
+
+    class ValueIterator implements Iterator <V> {
+        K[] keys;
+        V[] vals;
+        private int cursor;
+
+        public ValueIterator(K[] keys, V[] vals) {
+            this.keys = keys;
+            this.vals = vals;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cursor != size;
+        }
+
+        @Override
+        public V next() {
+            if (cursor >= size) {
+                throw new NoSuchElementException();
+            }
+            return vals[cursor++];
+        }
+
+        @Override
+        public void remove() {
+            if (hasNext()) {
+                BinarySearchST.this.delete(keys[cursor]);
+            }
+        }
+    }
+
     private void ensureCapacity(int minCapacity) {
         int oldCapacity = keys.length;
         if (minCapacity - oldCapacity > 0) {
@@ -165,7 +263,12 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
             st.put(key, "val" + key);
             st.put(i, "another" + i);
         }
-        System.out.println(st);
+        for (Integer k : st.keys()) {
+            System.out.println("iterator key -> " + k);
+        }
+        for (String v : st.values()) {
+            System.out.println("iterator value -> " + v);
+        }
         for (int i = 1; i <= 20; i++) {
             System.out.println(st.delete(i));
         }

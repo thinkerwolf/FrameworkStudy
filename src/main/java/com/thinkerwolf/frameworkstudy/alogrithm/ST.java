@@ -1,5 +1,7 @@
 package com.thinkerwolf.frameworkstudy.alogrithm;
 
+import java.util.Collection;
+
 /**
  * 一个符号表的接口
  *
@@ -45,6 +47,10 @@ public interface ST<K, V> {
      * @return
      */
     boolean isEmpty();
+
+    Collection<K> keys();
+
+    Collection<V> values();
 
     /**
      * 符号表的数据存储单位
