@@ -5,6 +5,7 @@ import com.thinkerwolf.frameworkstudy.alogrithm.ST;
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -126,9 +127,11 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
 
     class KeysIterator implements Iterator <K> {
         Entry <K, V> entry;
+        int exceptCount;
 
-        public KeysIterator(Entry <K, V> entry) {
+        KeysIterator(Entry <K, V> entry) {
             this.entry = entry;
+            this.exceptCount = size();
         }
 
         @Override
@@ -139,17 +142,28 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
         @Override
         public K next() {
             Entry <K, V> en = entry;
+            checkForComodification();
             entry = en.next;
             return en.getKey();
         }
 
         @Override
         public void remove() {
+            checkForComodification();
             if (hasNext()) {
-                SequentialSearchST.this.delete(entry.getKey());
-                entry = entry.next;
+                Entry <K, V> en = entry;
+                entry = en.next;
+                SequentialSearchST.this.delete(en.getKey());
+                exceptCount = size();
             }
         }
+
+        final void checkForComodification() {
+            if (exceptCount != size) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
     }
 
     class Values extends AbstractCollection <V> {
@@ -169,9 +183,11 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
     class ValueIterator implements Iterator <V> {
 
         Entry <K, V> entry;
+        int exceptCount;
 
-        public ValueIterator(Entry <K, V> entry) {
+        ValueIterator(Entry <K, V> entry) {
             this.entry = entry;
+            this.exceptCount = size();
         }
 
         @Override
@@ -182,15 +198,25 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
         @Override
         public V next() {
             Entry <K, V> en = entry;
+            checkForComodification();
             entry = en.next;
             return en.getValue();
         }
 
         @Override
         public void remove() {
+            checkForComodification();
             if (hasNext()) {
-                SequentialSearchST.this.delete(entry.getKey());
-                entry = entry.next;
+                Entry <K, V> en = entry;
+                entry = en.next;
+                SequentialSearchST.this.delete(en.getKey());
+                exceptCount = size();
+            }
+        }
+
+        final void checkForComodification() {
+            if (exceptCount != size) {
+                throw new ConcurrentModificationException();
             }
         }
     }
@@ -222,7 +248,7 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
             this(key, value, null);
         }
 
-        Entry(K key, V value, Entry<K, V> next) {
+        Entry(K key, V value, Entry <K, V> next) {
             this.key = key;
             this.value = value;
             this.next = next;
@@ -286,6 +312,15 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
 
         System.out.println(st);
 
+
+        Iterator <Integer> iterator = st.keys().iterator();
+        while (iterator.hasNext()) {
+//            Integer key = iterator.next();
+            st.delete(2);
+            iterator.remove();
+        }
+
+        System.out.println(st);
     }
 
 }
