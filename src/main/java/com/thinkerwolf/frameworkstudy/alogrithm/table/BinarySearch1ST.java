@@ -11,30 +11,21 @@ import java.util.*;
  * @param <V>
  * @author wukai
  */
-public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
+public class BinarySearch1ST<K extends Comparable <K>, V> implements ST <K, V> {
 
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     /**
-     * key数组
-     */
-    private K[] keys;
-    /**
-     * val数组
-     */
-    private V[] vals;
-    /**
-     * '
      * 查找表大小
      */
     private int size;
 
-    @SuppressWarnings("unchecked")
-    public BinarySearchST(int capacity) {
+    private Entry <K, V>[] entries;
+
+    public BinarySearch1ST(int capacity) {
         if (capacity < 0) {
             throw new IllegalArgumentException(capacity + "");
         }
-        this.keys = (K[]) new Comparable[capacity];
-        this.vals = (V[]) new Object[capacity];
+        this.entries = new Entry[capacity];
     }
 
     @Override
@@ -44,19 +35,17 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         }
         int index = rank(key);
         // 找到的位置在队列中
-        if (index < size && key.equals(keys[index])) {
-            V oldVal = vals[index];
-            vals[index] = value;
+        if (index < size && key.equals(entries[index].getKey())) {
+            V oldVal = entries[index].getValue();
+            entries[index].setValue(value);
             return oldVal;
         }
         ensureCapacity(size + 1);
         for (int i = size; i > index; i--) {
-            keys[i] = keys[i - 1];
-            vals[i] = vals[i - 1];
+            entries[i] = entries[i - 1];
         }
-        keys[index] = key;
-        vals[index] = value;
-
+        Entry <K, V> en = new Entry <>(key, value);
+        entries[index] = en;
         size++;
         return null;
     }
@@ -70,7 +59,7 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         if (index >= size) {
             return null;
         }
-        return vals[index];
+        return entries[index].getValue();
     }
 
     @Override
@@ -79,12 +68,10 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         if (index >= size) {
             return null;
         }
-        V oldVal = vals[index];
+        V oldVal = entries[index].getValue();
         int numMoved = size - index - 1;
-        System.arraycopy(keys, index + 1, keys, index, numMoved);
-        System.arraycopy(vals, index + 1, vals, index, numMoved);
-        keys[--size] = null;
-        vals[size] = null;
+        System.arraycopy(entries, index + 1, entries, index, numMoved);
+        entries[--size] = null;
         return oldVal;
     }
 
@@ -117,22 +104,20 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
 
         @Override
         public Iterator <K> iterator() {
-            return new KeysIterator(keys);
+            return new KeysIterator();
         }
 
         @Override
         public int size() {
-            return BinarySearchST.this.size();
+            return BinarySearch1ST.this.size();
         }
     }
 
     class KeysIterator implements Iterator <K> {
 
         int cursor;
-        K[] keys;
 
-        KeysIterator(K[] keys) {
-            this.keys = keys;
+        KeysIterator() {
         }
 
         @Override
@@ -145,13 +130,13 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
             if (cursor >= size) {
                 throw new NoSuchElementException();
             }
-            return keys[cursor++];
+            return entries[cursor++].getKey();
         }
 
         @Override
         public void remove() {
             if (hasNext()) {
-                BinarySearchST.this.delete(next());
+                BinarySearch1ST.this.delete(next());
                 cursor--;
             }
         }
@@ -161,23 +146,19 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
 
         @Override
         public Iterator <V> iterator() {
-            return new ValueIterator(keys, vals);
+            return new ValueIterator();
         }
 
         @Override
         public int size() {
-            return BinarySearchST.this.size();
+            return BinarySearch1ST.this.size();
         }
     }
 
     class ValueIterator implements Iterator <V> {
-        K[] keys;
-        V[] vals;
         private int cursor;
 
-        public ValueIterator(K[] keys, V[] vals) {
-            this.keys = keys;
-            this.vals = vals;
+        public ValueIterator() {
         }
 
         @Override
@@ -190,19 +171,19 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
             if (cursor >= size) {
                 throw new NoSuchElementException();
             }
-            return vals[cursor++];
+            return entries[cursor++].getValue();
         }
 
         @Override
         public void remove() {
             if (hasNext()) {
-                BinarySearchST.this.delete(keys[cursor]);
+                BinarySearch1ST.this.delete(entries[cursor].getKey());
             }
         }
     }
 
     private void ensureCapacity(int minCapacity) {
-        int oldCapacity = keys.length;
+        int oldCapacity = entries.length;
         if (minCapacity - oldCapacity > 0) {
             int newCapacity = oldCapacity + oldCapacity >> 1;
             if (newCapacity - minCapacity < 0) {
@@ -211,8 +192,7 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
             if (newCapacity - MAX_ARRAY_SIZE > 0) {
                 newCapacity = minCapacity > MAX_ARRAY_SIZE ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
             }
-            keys = Arrays.copyOf(keys, newCapacity);
-            vals = Arrays.copyOf(vals, newCapacity);
+            entries = Arrays.copyOf(entries, newCapacity);
         }
     }
 
@@ -230,7 +210,7 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         int hi = size - 1;
         while (lo <= hi) {
             int mid = lo + (hi - lo) / 2;
-            int cmp = key.compareTo(keys[mid]);
+            int cmp = key.compareTo(entries[mid].getKey());
             if (cmp > 0) {
                 lo = mid + 1;
             } else if (cmp < 0) {
@@ -247,9 +227,9 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         StringBuilder builder = new StringBuilder();
         builder.append('{');
         for (int i = 0; i < size; i++) {
-            builder.append(keys[i]);
+            builder.append(entries[i].getKey());
             builder.append('=');
-            builder.append(vals[i]);
+            builder.append(entries[i].getValue());
             if (i >= size - 1) {
                 builder.append('}');
                 break;
@@ -259,8 +239,35 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         return builder.toString();
     }
 
+
+    private static class Entry<K extends Comparable <K>, V> implements ST.Entry <K, V> {
+        K key;
+        V val;
+
+        Entry(K key, V val) {
+            this.key = key;
+            this.val = val;
+        }
+
+        @Override
+        public K getKey() {
+            return key;
+        }
+
+        @Override
+        public V getValue() {
+            return val;
+        }
+
+        @Override
+        public void setValue(V v) {
+            this.val = v;
+        }
+    }
+
+
     public static void main(String[] args) {
-        BinarySearchST <Integer, String> st = new BinarySearchST <>(16);
+        BinarySearch1ST <Integer, String> st = new BinarySearch1ST <>(16);
 
         Random r = new Random();
         for (int i = 1; i <= 20; i++) {

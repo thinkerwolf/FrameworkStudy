@@ -86,6 +86,17 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
         return value;
     }
 
+    private Entry <K, V> node(K key) {
+        Entry <K, V> en = head;
+        for (; en != null; ) {
+            if (en.getKey().equals(key)) {
+                return en;
+            }
+            en = en.next;
+        }
+        return null;
+    }
+
     private static <K, V> void check(K key, V value) {
         if (key == null || value == null) {
             throw new NullPointerException();
@@ -110,6 +121,11 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
     @Override
     public Collection <V> values() {
         return new Values();
+    }
+
+    @Override
+    public boolean contains(K key) {
+        return node(key) != null;
     }
 
     class Keys extends AbstractCollection <K> {

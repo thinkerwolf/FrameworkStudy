@@ -139,6 +139,11 @@ public class OrderedSequentialSearchST<K extends Comparable <K>, V> implements S
         return null;
     }
 
+    @Override
+    public boolean contains(K key) {
+        return node(key) != null;
+    }
+
     class Keys extends AbstractCollection <K> {
 
         @Override

@@ -648,6 +648,8 @@ public final class StdIn {
      */
     public static void main(String[] args) {
 
+        StdOut.println(EVERYTHING_PATTERN.matcher("A").find());
+
         StdOut.print("Type a string: ");
         String s = StdIn.readString();
         StdOut.println("Your string was: " + s);

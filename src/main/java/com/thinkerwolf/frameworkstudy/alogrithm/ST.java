@@ -52,6 +52,8 @@ public interface ST<K, V> {
 
     Collection<V> values();
 
+    boolean contains(K key);
+
     /**
      * 符号表的数据存储单位
      *
