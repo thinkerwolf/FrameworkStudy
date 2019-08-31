@@ -89,12 +89,12 @@ public class ArrayST<K, V> extends AbstractST <K, V> {
 
     @Override
     public Collection <K> keys() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection <V> values() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
