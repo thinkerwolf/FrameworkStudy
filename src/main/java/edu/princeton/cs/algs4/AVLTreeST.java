@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
 /**
  *  The {@code AVLTreeST} class represents an ordered symbol table of
  *  generic key-value pairs. It supports the usual <em>put</em>, <em>get</em>,
- *  <em>contains</em>, <em>delete</em>, <em>size</em>, and <em>is-empty</em>
+ *  <em>containsKey</em>, <em>delete</em>, <em>size</em>, and <em>is-empty</em>
  *  methods. It also provides ordered methods for finding the <em>minimum</em>,
  *  <em>maximum</em>, <em>floor</em>, and <em>ceiling</em>. It also provides a
  *  <em>keys</em> method for iterating over all of the keys. A symbol table
@@ -51,7 +51,7 @@ import java.util.NoSuchElementException;
  *  This implementation requires that the key type implements the
  *  {@code Comparable} interface and calls the {@code compareTo()} and
  *  method to compare two keys. It does not call either {@code equals()} or
- *  {@code hashCode()}. The <em>put</em>, <em>get</em>, <em>contains</em>,
+ *  {@code hashCode()}. The <em>put</em>, <em>get</em>, <em>containsKey</em>,
  *  <em>delete</em>, <em>minimum</em>, <em>maximum</em>, <em>ceiling</em>, and
  *  <em>floor</em> operations each take logarithmic time in the worst case. The
  *  <em>size</em>, and <em>is-empty</em> operations take constant time.
@@ -183,10 +183,10 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
     }
 
     /**
-     * Checks if the symbol table contains the given key.
+     * Checks if the symbol table containsKey the given key.
      * 
      * @param key the key
-     * @return {@code true} if the symbol table contains {@code key}
+     * @return {@code true} if the symbol table containsKey {@code key}
      *         and {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
@@ -196,7 +196,7 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
 
     /**
      * Inserts the specified key-value pair into the symbol table, overwriting
-     * the old value with the new value if the symbol table already contains the
+     * the old value with the new value if the symbol table already containsKey the
      * specified key. Deletes the specified key (and its associated value) from
      * this symbol table if the specified value is {@code null}.
      * 
@@ -216,7 +216,7 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
 
     /**
      * Inserts the key-value pair in the subtree. It overrides the old value
-     * with the new value if the symbol table already contains the specified key
+     * with the new value if the symbol table already containsKey the specified key
      * and deletes the specified key (and its associated value) from this symbol
      * table if the specified value is {@code null}.
      * 

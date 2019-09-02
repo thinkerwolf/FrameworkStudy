@@ -311,7 +311,7 @@ import javax.swing.KeyStroke;
  *  The supported image formats are JPEG and PNG. The filename must have either the
  *  extension .jpg or .png.
  *  We recommend using PNG for drawing that consist solely of geometric shapes and JPEG 
- *  for drawings that contains pictures.
+ *  for drawings that containsKey pictures.
  *  <p>
  *  <b>Clearing the canvas.</b>
  *  To clear the entire drawing canvas, you can use the following methods:

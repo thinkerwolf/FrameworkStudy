@@ -84,7 +84,7 @@ public class IndexBinomialMinPQ<Key> implements Iterable<Integer> {
 	}
 
 	/**
-	 * Does the priority queue contains the index i ?
+	 * Does the priority queue containsKey the index i ?
 	 * Worst case is O(1)
 	 * @param i an index
 	 * @throws IllegalArgumentException if the specified index is invalid

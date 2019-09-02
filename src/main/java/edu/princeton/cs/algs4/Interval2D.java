@@ -16,7 +16,7 @@ package edu.princeton.cs.algs4;
  *  Two-dimensional intervals are immutable: their values cannot be changed
  *  after they are created.
  *  The class {@code Interval2D} includes methods for checking whether
- *  a two-dimensional interval contains a point and determining whether
+ *  a two-dimensional interval containsKey a point and determining whether
  *  two two-dimensional intervals intersect.
  *  <p>
  *  For additional documentation, 
@@ -55,7 +55,7 @@ public class Interval2D {
     /**
      * Does this two-dimensional interval contain the point p?
      * @param p the two-dimensional point
-     * @return true if this two-dimensional interval contains the point p; false otherwise
+     * @return true if this two-dimensional interval containsKey the point p; false otherwise
      */
     public boolean contains(Point2D p) {
         return x.contains(p.x())  && y.contains(p.y());

@@ -17,7 +17,7 @@ import java.util.Arrays;
  *  this by keeping the set of integers in a sorted array and using
  *  binary search to find the given integer.
  *  <p>
- *  The <em>rank</em> and <em>contains</em> operations take
+ *  The <em>rank</em> and <em>containsKey</em> operations take
  *  logarithmic time in the worst case.
  *  <p>
  *  For additional documentation, see <a href="https://algs4.cs.princeton.edu/12oop">Section 1.2</a> of
@@ -32,7 +32,7 @@ public class StaticSETofInts {
     /**
      * Initializes a set of integers specified by the integer array.
      * @param keys the array of integers
-     * @throws IllegalArgumentException if the array contains duplicate integers
+     * @throws IllegalArgumentException if the array containsKey duplicate integers
      */
     public StaticSETofInts(int[] keys) {
 
@@ -47,13 +47,13 @@ public class StaticSETofInts {
         // check for duplicates
         for (int i = 1; i < a.length; i++)
             if (a[i] == a[i-1])
-                throw new IllegalArgumentException("Argument arrays contains duplicate keys.");
+                throw new IllegalArgumentException("Argument arrays containsKey duplicate keys.");
     }
 
     /**
      * Is the key in this set of integers?
      * @param key the search key
-     * @return true if the set of integers contains the key; false otherwise
+     * @return true if the set of integers containsKey the key; false otherwise
      */
     public boolean contains(int key) {
         return rank(key) != -1;

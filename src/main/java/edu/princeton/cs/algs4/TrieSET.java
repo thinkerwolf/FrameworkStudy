@@ -18,14 +18,14 @@ import java.util.Iterator;
 /**
  *  The {@code TrieSET} class represents an ordered set of strings over
  *  the extended ASCII alphabet.
- *  It supports the usual <em>add</em>, <em>contains</em>, and <em>delete</em>
+ *  It supports the usual <em>add</em>, <em>containsKey</em>, and <em>delete</em>
  *  methods. It also provides character-based methods for finding the string
  *  in the set that is the <em>longest prefix</em> of a given prefix,
  *  finding all strings in the set that <em>start with</em> a given prefix,
  *  and finding all strings in the set that <em>match</em> a given pattern.
  *  <p>
  *  This implementation uses a 256-way trie.
- *  The <em>add</em>, <em>contains</em>, <em>delete</em>, and
+ *  The <em>add</em>, <em>containsKey</em>, <em>delete</em>, and
  *  <em>longest prefix</em> methods take time proportional to the length
  *  of the key (in the worst case). Construction takes constant time.
  *  <p>
@@ -57,12 +57,12 @@ public class TrieSET implements Iterable<String> {
     /**
      * Does the set contain the given key?
      * @param key the key
-     * @return {@code true} if the set contains {@code key} and
+     * @return {@code true} if the set containsKey {@code key} and
      *     {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(String key) {
-        if (key == null) throw new IllegalArgumentException("argument to contains() is null");
+        if (key == null) throw new IllegalArgumentException("argument to containsKey() is null");
         Node x = get(root, key, 0);
         if (x == null) return false;
         return x.isString;

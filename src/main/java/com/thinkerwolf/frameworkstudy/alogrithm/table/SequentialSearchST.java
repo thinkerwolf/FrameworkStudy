@@ -9,7 +9,8 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
- * 无序链表实现的符号表，效率比较低
+ * 无序链表实现的符号表
+ * <strong>插入效率很低，因为是链表，需要从头到尾检查链表。查找效率很低，从头到尾检查链表</strong>
  *
  * @param <K>
  * @param <V>
@@ -124,7 +125,7 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
     }
 
     @Override
-    public boolean contains(K key) {
+    public boolean containsKey(K key) {
         return node(key) != null;
     }
 

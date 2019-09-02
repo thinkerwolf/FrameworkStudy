@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
 /**
  *  The {@code BST} class represents an ordered symbol table of generic
  *  key-value pairs.
- *  It supports the usual <em>put</em>, <em>get</em>, <em>contains</em>,
+ *  It supports the usual <em>put</em>, <em>get</em>, <em>containsKey</em>,
  *  <em>delete</em>, <em>size</em>, and <em>is-empty</em> methods.
  *  It also provides ordered methods for finding the <em>minimum</em>,
  *  <em>maximum</em>, <em>floor</em>, <em>select</em>, and <em>ceiling</em>.
@@ -48,7 +48,7 @@ import java.util.NoSuchElementException;
  *  {@code compareTo()} and method to compare two keys. It does not call either
  *  {@code equals()} or {@code hashCode()}.
  *  The <em>put</em> and <em>remove</em> operations each take linear time in
- *  the worst case; the <em>contains</em>, <em>ceiling</em>, <em>floor</em>,
+ *  the worst case; the <em>containsKey</em>, <em>ceiling</em>, <em>floor</em>,
  *  and <em>rank</em> operations take logarithmic time; the <em>size</em>,
  *  <em>is-empty</em>, <em>minimum</em>, <em>maximum</em>, and <em>select</em>
  *  operations take constant time. Construction takes constant time.
@@ -119,12 +119,12 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      * Does this symbol table contain the given key?
      *
      * @param  key the key
-     * @return {@code true} if this symbol table contains {@code key} and
+     * @return {@code true} if this symbol table containsKey {@code key} and
      *         {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(Key key) {
-        if (key == null) throw new IllegalArgumentException("argument to contains() is null");
+        if (key == null) throw new IllegalArgumentException("argument to containsKey() is null");
         return get(key) != null;
     }
 
@@ -169,7 +169,7 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 
     /**
      * Inserts the specified key-value pair into the symbol table, overwriting the old 
-     * value with the new value if the symbol table already contains the specified key.
+     * value with the new value if the symbol table already containsKey the specified key.
      * Deletes the specified key (and its associated value) from this symbol table
      * if the specified value is {@code null}.
      *

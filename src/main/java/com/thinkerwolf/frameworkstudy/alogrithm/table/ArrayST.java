@@ -98,7 +98,7 @@ public class ArrayST<K, V> extends AbstractST <K, V> {
     }
 
     @Override
-    public boolean contains(K key) {
+    public boolean containsKey(K key) {
         return find(key) >= 0;
     }
 

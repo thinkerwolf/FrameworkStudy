@@ -14,10 +14,10 @@ import java.util.Comparator;
 
 /**
  *  The {@code Interval1D} class represents a one-dimensional interval.
- *  The interval is <em>closed</em>—it contains both endpoints.
+ *  The interval is <em>closed</em>—it containsKey both endpoints.
  *  Intervals are immutable: their values cannot be changed after they are created.
  *  The class {@code Interval1D} includes methods for checking whether
- *  an interval contains a point and determining whether two intervals intersect.
+ *  an interval containsKey a point and determining whether two intervals intersect.
  *  <p>
  *  For additional documentation, 
  *  see <a href="https://algs4.cs.princeton.edu/12oop">Section 1.2</a> of 
@@ -127,10 +127,10 @@ public class Interval1D {
     }
 
     /**
-     * Returns true if this interval contains the specified value.
+     * Returns true if this interval containsKey the specified value.
      *
      * @param x the value
-     * @return {@code true} if this interval contains the value {@code x};
+     * @return {@code true} if this interval containsKey the value {@code x};
      *         {@code false} otherwise
      */
     public boolean contains(double x) {

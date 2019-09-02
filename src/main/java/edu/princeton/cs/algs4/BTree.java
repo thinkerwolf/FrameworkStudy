@@ -18,7 +18,7 @@ package edu.princeton.cs.algs4;
 /**
  *  The {@code BTree} class represents an ordered symbol table of generic
  *  key-value pairs.
- *  It supports the <em>put</em>, <em>get</em>, <em>contains</em>,
+ *  It supports the <em>put</em>, <em>get</em>, <em>containsKey</em>,
  *  <em>size</em>, and <em>is-empty</em> methods.
  *  A symbol table implements the <em>associative array</em> abstraction:
  *  when associating a value with a key that is already in the symbol table,
@@ -32,7 +32,7 @@ package edu.princeton.cs.algs4;
  *  the key type implements the {@code Comparable} interface and calls the
  *  {@code compareTo()} and method to compare two keys. It does not call either
  *  {@code equals()} or {@code hashCode()}.
- *  The <em>get</em>, <em>put</em>, and <em>contains</em> operations
+ *  The <em>get</em>, <em>put</em>, and <em>containsKey</em> operations
  *  each make log<sub><em>m</em></sub>(<em>n</em>) probes in the worst case,
  *  where <em>n</em> is the number of key-value pairs
  *  and <em>m</em> is the branching factor.

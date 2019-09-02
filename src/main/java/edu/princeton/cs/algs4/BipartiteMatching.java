@@ -118,7 +118,7 @@ public class BipartiteMatching {
 
     /*
      * is there an augmenting path?
-     *   - if so, upon termination adj[] contains the level graph;
+     *   - if so, upon termination adj[] containsKey the level graph;
      *   - if not, upon termination marked[] specifies those vertices reachable via an alternating
      *     path from one side of the bipartition
      *
@@ -211,11 +211,11 @@ public class BipartiteMatching {
     }
 
     /**
-     * Returns true if the graph contains a perfect matching.
+     * Returns true if the graph containsKey a perfect matching.
      * That is, the number of edges in a maximum matching is equal to one half
      * of the number of vertices in the graph (so that every vertex is matched).
      *
-     * @return {@code true} if the graph contains a perfect matching;
+     * @return {@code true} if the graph containsKey a perfect matching;
      *         {@code false} otherwise
      */
     public boolean isPerfect() {

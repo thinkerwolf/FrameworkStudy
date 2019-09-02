@@ -69,7 +69,7 @@ public class FrequencyCounter {
             }
             if (key.length() < minlen) continue;
             words++;
-            if (st.contains(key)) {
+            if (st.containsKey(key)) {
                 st.put(key, st.get(key) + 1);
             }
             else {

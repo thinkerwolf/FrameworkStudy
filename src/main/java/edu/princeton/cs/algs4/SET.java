@@ -21,7 +21,7 @@ import java.util.TreeSet;
 
 /**
  *  The {@code SET} class represents an ordered set of comparable keys.
- *  It supports the usual <em>add</em>, <em>contains</em>, and <em>delete</em>
+ *  It supports the usual <em>add</em>, <em>containsKey</em>, and <em>delete</em>
  *  methods. It also provides ordered methods for finding the <em>minimum</em>,
  *  <em>maximum</em>, <em>floor</em>, and <em>ceiling</em> and set methods
  *  for <em>union</em>, <em>intersection</em>, and <em>equality</em>.
@@ -33,7 +33,7 @@ import java.util.TreeSet;
  *  the key type implements the {@code Comparable} interface and calls the
  *  {@code compareTo()} and method to compare two keys. It does not call either
  *  {@code equals()} or {@code hashCode()}.
- *  The <em>add</em>, <em>contains</em>, <em>delete</em>, <em>minimum</em>,
+ *  The <em>add</em>, <em>containsKey</em>, <em>delete</em>, <em>minimum</em>,
  *  <em>maximum</em>, <em>ceiling</em>, and <em>floor</em> methods take
  *  logarithmic time in the worst case.
  *  The <em>size</em>, and <em>is-empty</em> operations take constant time.
@@ -81,20 +81,20 @@ public class SET<Key extends Comparable<Key>> implements Iterable<Key> {
 
 
     /**
-     * Returns true if this set contains the given key.
+     * Returns true if this set containsKey the given key.
      *
      * @param  key the key
-     * @return {@code true} if this set contains {@code key};
+     * @return {@code true} if this set containsKey {@code key};
      *         {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(Key key) {
-        if (key == null) throw new IllegalArgumentException("called contains() with a null key");
+        if (key == null) throw new IllegalArgumentException("called containsKey() with a null key");
         return set.contains(key);
     }
 
     /**
-     * Removes the specified key from this set (if the set contains the specified key).
+     * Removes the specified key from this set (if the set containsKey the specified key).
      *
      * @param  key the key
      * @throws IllegalArgumentException if {@code key} is {@code null}

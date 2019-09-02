@@ -30,7 +30,7 @@ package edu.princeton.cs.algs4;
  *  This implementation uses an {@link ST} to map from strings to integers,
  *  an array to map from integers to strings, and a {@link Digraph} to store
  *  the underlying graph.
- *  The <em>indexOf</em> and <em>contains</em> operations take time 
+ *  The <em>indexOf</em> and <em>containsKey</em> operations take time
  *  proportional to log <em>V</em>, where <em>V</em> is the number of vertices.
  *  The <em>nameOf</em> operation takes constant time.
  *  <p>
@@ -47,7 +47,7 @@ public class SymbolDigraph {
 
     /**  
      * Initializes a digraph from a file using the specified delimiter.
-     * Each line in the file contains
+     * Each line in the file containsKey
      * the name of a vertex, followed by a list of the names
      * of the vertices adjacent to that vertex, separated by the delimiter.
      * @param filename the name of the file

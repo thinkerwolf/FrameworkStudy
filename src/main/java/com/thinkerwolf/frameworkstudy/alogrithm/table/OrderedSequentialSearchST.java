@@ -140,7 +140,7 @@ public class OrderedSequentialSearchST<K extends Comparable <K>, V> implements S
     }
 
     @Override
-    public boolean contains(K key) {
+    public boolean containsKey(K key) {
         return node(key) != null;
     }
 

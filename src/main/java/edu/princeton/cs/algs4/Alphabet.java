@@ -89,7 +89,7 @@ public class Alphabet {
      */
     public Alphabet(String alpha) {
 
-        // check that alphabet contains no duplicate chars
+        // check that alphabet containsKey no duplicate chars
         boolean[] unicode = new boolean[Character.MAX_VALUE];
         for (int i = 0; i < alpha.length(); i++) {
             char c = alpha.charAt(i);

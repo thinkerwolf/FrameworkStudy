@@ -30,7 +30,7 @@ package edu.princeton.cs.algs4;
  *  The {@code PatriciaST} class provides an implementation of an unordered
  *  symbol table of key-value pairs, with the restriction that the key is of
  *  class {@link String}. It supports the usual <em>put</em>,
- *  <em>get</em>, <em>contains</em>, <em>delete</em>, <em>size</em>, and
+ *  <em>get</em>, <em>containsKey</em>, <em>delete</em>, <em>size</em>, and
  *  <em>is-empty</em> methods. It also provides a <em>keys</em> method for
  *  iterating over all of the keys. A symbol table implements the
  *  <em>associative array</em> abstraction: when associating a value with a key
@@ -116,7 +116,7 @@ public class PatriciaST<Value> {
     /**
      * Initializes an empty PATRICIA-based symbol table.
      */
-    /* The constructor creates a head (sentinel) node that contains a
+    /* The constructor creates a head (sentinel) node that containsKey a
      * zero-length string.
      */
     public PatriciaST() {
@@ -128,7 +128,7 @@ public class PatriciaST<Value> {
 
     /**
      * Places a key-value pair into the symbol table. If the table already
-     * contains the specified key, then its associated value becomes updated.
+     * containsKey the specified key, then its associated value becomes updated.
      * If the value provided is {@code null}, then the key becomes removed
      * from the symbol table.
      * @param key the key
@@ -247,7 +247,7 @@ public class PatriciaST<Value> {
      * Returns {@code true} if the key-value pair, specified by the given
      * key, exists within the symbol table.
      * @param key the key
-     * @return {@code true} if this symbol table contains the given
+     * @return {@code true} if this symbol table containsKey the given
      * {@code key} and {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      * @throws IllegalArgumentException if {@code key} is the empty string.

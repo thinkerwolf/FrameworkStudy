@@ -172,7 +172,7 @@ public class SegmentTree {
         Node n = heap[v];
 
         /**
-         * If the updating-range contains the portion of the current Node  We lazily update it.
+         * If the updating-range containsKey the portion of the current Node  We lazily update it.
          * This means We do NOT update each position of the vector, but update only some temporal
          * values into the Node; such values into the Node will be propagated down to its children only when they need to.
          */
@@ -218,7 +218,7 @@ public class SegmentTree {
 
     }
 
-    //Test if the range1 contains range2
+    //Test if the range1 containsKey range2
     private boolean contains(int from1, int to1, int from2, int to2) {
         return from2 >= from1 && to2 <= to1;
     }

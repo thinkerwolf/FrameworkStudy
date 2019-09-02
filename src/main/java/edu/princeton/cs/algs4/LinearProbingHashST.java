@@ -13,7 +13,7 @@ package edu.princeton.cs.algs4;
 /**
  *  The {@code LinearProbingHashST} class represents a symbol table of generic
  *  key-value pairs.
- *  It supports the usual <em>put</em>, <em>get</em>, <em>contains</em>,
+ *  It supports the usual <em>put</em>, <em>get</em>, <em>containsKey</em>,
  *  <em>delete</em>, <em>size</em>, and <em>is-empty</em> methods.
  *  It also provides a <em>keys</em> method for iterating over all of the keys.
  *  A symbol table implements the <em>associative array</em> abstraction:
@@ -26,7 +26,7 @@ package edu.princeton.cs.algs4;
  *  <p>
  *  This implementation uses a linear probing hash table. It requires that
  *  the key type overrides the {@code equals()} and {@code hashCode()} methods.
- *  The expected time per <em>put</em>, <em>contains</em>, or <em>remove</em>
+ *  The expected time per <em>put</em>, <em>containsKey</em>, or <em>remove</em>
  *  operation is constant, subject to the uniform hashing assumption.
  *  The <em>size</em>, and <em>is-empty</em> operations take constant time.
  *  Construction takes constant time.
@@ -88,15 +88,15 @@ public class LinearProbingHashST<Key, Value> {
     }
 
     /**
-     * Returns true if this symbol table contains the specified key.
+     * Returns true if this symbol table containsKey the specified key.
      *
      * @param  key the key
-     * @return {@code true} if this symbol table contains {@code key};
+     * @return {@code true} if this symbol table containsKey {@code key};
      *         {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(Key key) {
-        if (key == null) throw new IllegalArgumentException("argument to contains() is null");
+        if (key == null) throw new IllegalArgumentException("argument to containsKey() is null");
         return get(key) != null;
     }
 
@@ -120,7 +120,7 @@ public class LinearProbingHashST<Key, Value> {
 
     /**
      * Inserts the specified key-value pair into the symbol table, overwriting the old 
-     * value with the new value if the symbol table already contains the specified key.
+     * value with the new value if the symbol table already containsKey the specified key.
      * Deletes the specified key (and its associated value) from this symbol table
      * if the specified value is {@code null}.
      *

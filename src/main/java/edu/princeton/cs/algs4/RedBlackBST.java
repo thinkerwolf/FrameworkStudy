@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
 /**
  *  The {@code BST} class represents an ordered symbol table of generic
  *  key-value pairs.
- *  It supports the usual <em>put</em>, <em>get</em>, <em>contains</em>,
+ *  It supports the usual <em>put</em>, <em>get</em>, <em>containsKey</em>,
  *  <em>delete</em>, <em>size</em>, and <em>is-empty</em> methods.
  *  It also provides ordered methods for finding the <em>minimum</em>,
  *  <em>maximum</em>, <em>floor</em>, and <em>ceiling</em>.
@@ -51,7 +51,7 @@ import java.util.NoSuchElementException;
  *  the key type implements the {@code Comparable} interface and calls the
  *  {@code compareTo()} and method to compare two keys. It does not call either
  *  {@code equals()} or {@code hashCode()}.
- *  The <em>put</em>, <em>contains</em>, <em>remove</em>, <em>minimum</em>,
+ *  The <em>put</em>, <em>containsKey</em>, <em>remove</em>, <em>minimum</em>,
  *  <em>maximum</em>, <em>ceiling</em>, and <em>floor</em> operations each take
  *  logarithmic time in the worst case, if the tree becomes unbalanced.
  *  The <em>size</em>, and <em>is-empty</em> operations take constant time.
@@ -159,7 +159,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     /**
      * Does this symbol table contain the given key?
      * @param key the key
-     * @return {@code true} if this symbol table contains {@code key} and
+     * @return {@code true} if this symbol table containsKey {@code key} and
      *     {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
@@ -173,7 +173,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 
     /**
      * Inserts the specified key-value pair into the symbol table, overwriting the old 
-     * value with the new value if the symbol table already contains the specified key.
+     * value with the new value if the symbol table already containsKey the specified key.
      * Deletes the specified key (and its associated value) from this symbol table
      * if the specified value is {@code null}.
      *

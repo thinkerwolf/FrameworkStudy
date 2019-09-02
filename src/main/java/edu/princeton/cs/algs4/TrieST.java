@@ -23,7 +23,7 @@ package edu.princeton.cs.algs4;
 /**
  *  The {@code TrieST} class represents an symbol table of key-value
  *  pairs, with string keys and generic values.
- *  It supports the usual <em>put</em>, <em>get</em>, <em>contains</em>,
+ *  It supports the usual <em>put</em>, <em>get</em>, <em>containsKey</em>,
  *  <em>delete</em>, <em>size</em>, and <em>is-empty</em> methods.
  *  It also provides character-based methods for finding the string
  *  in the symbol table that is the <em>longest prefix</em> of a given prefix,
@@ -38,7 +38,7 @@ package edu.princeton.cs.algs4;
  *  from the symbol table.
  *  <p>
  *  This implementation uses a 256-way trie.
- *  The <em>put</em>, <em>contains</em>, <em>delete</em>, and
+ *  The <em>put</em>, <em>containsKey</em>, <em>delete</em>, and
  *  <em>longest prefix</em> operations take time proportional to the length
  *  of the key (in the worst case). Construction takes constant time.
  *  The <em>size</em>, and <em>is-empty</em> operations take constant time.
@@ -84,12 +84,12 @@ public class TrieST<Value> {
     /**
      * Does this symbol table contain the given key?
      * @param key the key
-     * @return {@code true} if this symbol table contains {@code key} and
+     * @return {@code true} if this symbol table containsKey {@code key} and
      *     {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(String key) {
-        if (key == null) throw new IllegalArgumentException("argument to contains() is null");
+        if (key == null) throw new IllegalArgumentException("argument to containsKey() is null");
         return get(key) != null;
     }
 

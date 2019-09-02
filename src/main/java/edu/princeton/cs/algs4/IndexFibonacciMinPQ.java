@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
  *  
  *  This implementation uses a Fibonacci heap along with an array to associate
  *  keys with integers in the given range.
- *  The insert, size, is-empty, contains, minimum-index, minimum-key
+ *  The insert, size, is-empty, containsKey, minimum-index, minimum-key
  *  and key-of take constant time.
  *  The decrease-key operation takes amortized constant time.
  *  The delete, increase-key, delete-the-minimum, change-key take amortized logarithmic time.
@@ -91,7 +91,7 @@ public class IndexFibonacciMinPQ<Key> implements Iterable<Integer> {
 	}
 
 	/**
-	 * Does the priority queue contains the index i ?
+	 * Does the priority queue containsKey the index i ?
 	 * Worst case is O(1)
 	 * @param i an index
 	 * @throws IllegalArgumentException if the specified index is invalid

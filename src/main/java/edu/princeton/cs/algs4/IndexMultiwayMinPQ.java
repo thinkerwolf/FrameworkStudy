@@ -29,7 +29,7 @@ import java.util.NoSuchElementException;
  *  The delete-the-minimum, delete, change-key and increase-key operations
  *  take time proportional to d*log-d(n)
  *  The insert and decrease-key take time proportional to log-d(n)
- *  The is-empty, min-index, min-key, size, contains and key-of operations take constant time.
+ *  The is-empty, min-index, min-key, size, containsKey and key-of operations take constant time.
  *  Construction takes time proportional to the specified capacity.
  *  
  *  The arrays used in this structure have the first d indices empty,
@@ -98,7 +98,7 @@ public class IndexMultiwayMinPQ<Key> implements Iterable<Integer> {
 	}
 
 	/**
-	 * Does the priority queue contains the index i ?
+	 * Does the priority queue containsKey the index i ?
 	 * Worst case is O(1)
 	 * @param i an index
 	 * @throws IllegalArgumentException if the specified index is invalid

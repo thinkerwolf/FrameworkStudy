@@ -32,7 +32,7 @@ import java.util.Iterator;
  *  The {@code PatriciaSET} class provides an implementation of an
  *  unordered set, with the restriction that the items (keys) are of class
  *  {@link String}. It supports the usual <em>add</em>,
- *  <em>contains</em>, <em>delete</em>, <em>size</em>, and <em>is-empty</em>
+ *  <em>containsKey</em>, <em>delete</em>, <em>size</em>, and <em>is-empty</em>
  *  methods. It also provides an <em>iterator</em> method for iterating over all
  *  the elements in the set.
  *  <p>
@@ -61,19 +61,19 @@ import java.util.Iterator;
  *  the number of keys. Consequently, some classify PATRICIA as a tree.
  *  <p>
  *  The analysis of PATRICIA is complicated. The theoretical wost-case
- *  performance for an <em>add</em>, <em>contains</em>, or <em>delete</em>
+ *  performance for an <em>add</em>, <em>containsKey</em>, or <em>delete</em>
  *  operation is <strong>O(N)</strong>, when <strong>N</strong> is less than
  *  <strong>W</strong> (where <strong>W</strong> is the length in bits of the
  *  longest key), and <strong>O(W)</strong>, when <strong>N</strong> is greater
  *  than <strong>W</strong>. However, the worst case is unlikely to occur with
  *  typical use. The average (and usual) performance of PATRICIA is
  *  approximately <strong>~lg N</strong> for each <em>add</em>,
- *  <em>contains</em>, or <em>delete</em> operation. Although this appears to
+ *  <em>containsKey</em>, or <em>delete</em> operation. Although this appears to
  *  put PATRICIA on the same footing as binary trees, this time complexity
  *  represents the number of single-bit test operations (under PATRICIA), and
  *  not full-key comparisons (as required by binary trees). After the single-bit
  *  tests conclude, PATRICIA requires just one full-key comparison to confirm
- *  the existence (or absence) of the key (per <em>add</em>, <em>contains</em>,
+ *  the existence (or absence) of the key (per <em>add</em>, <em>containsKey</em>,
  *  or <em>delete</em> operation).
  *  <p>
  *  In practice, decent implementations of PATRICIA can often outperform
@@ -111,7 +111,7 @@ public class PatriciaSET implements Iterable<String> {
     /**
      * Initializes an empty PATRICIA-based set.
      */
-    /* The constructor creates a head (sentinel) node that contains a
+    /* The constructor creates a head (sentinel) node that containsKey a
      * zero-length string.
      */
     public PatriciaSET() {
@@ -163,13 +163,13 @@ public class PatriciaSET implements Iterable<String> {
     /**
      * Does the set contain the given key?
      * @param key the key
-     * @return {@code true} if the set contains {@code key} and
+     * @return {@code true} if the set containsKey {@code key} and
      * {@code false} otherwise
      * @throws IllegalArgumentException if {@code key} is {@code null}
      * @throws IllegalArgumentException if {@code key} is the empty string.
      */
     public boolean contains(String key) {
-        if (key == null) throw new IllegalArgumentException("called contains(null)");
+        if (key == null) throw new IllegalArgumentException("called containsKey(null)");
         if (key.length() == 0) throw new IllegalArgumentException("invalid key");
         Node p;
         Node x = head;

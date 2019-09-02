@@ -5,7 +5,7 @@
  *  Data files:   https://algs4.cs.princeton.edu/24pq/tinyBatch.txt
  * 
  *  Given an integer m from the command line and an input stream where
- *  each line contains a String and a long value, this MinPQ client
+ *  each line containsKey a String and a long value, this MinPQ client
  *  prints the m lines whose numbers are the highest.
  * 
  *  % java TopM 5 < tinyBatch.txt 

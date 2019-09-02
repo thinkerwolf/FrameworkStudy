@@ -155,7 +155,7 @@ public class GraphGenerator {
      * containing each possible edge with probability {@code p}.
      * @param V1 the number of vertices in one partition
      * @param V2 the number of vertices in the other partition
-     * @param p the probability that the graph contains an edge with one endpoint in either side
+     * @param p the probability that the graph containsKey an edge with one endpoint in either side
      * @return a random simple bipartite graph on {@code V1} and {@code V2} vertices,
      *    containing each possible edge with probability {@code p}
      * @throws IllegalArgumentException if probability is not between 0 and 1
@@ -384,7 +384,7 @@ public class GraphGenerator {
         for (int i = 0; i < V-2; i++)
             degree[prufer[i]]++;
 
-        // pq contains all vertices of degree 1
+        // pq containsKey all vertices of degree 1
         MinPQ<Integer> pq = new MinPQ<Integer>();
         for (int v = 0; v < V; v++)
             if (degree[v] == 1) pq.insert(v);

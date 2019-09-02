@@ -97,6 +97,20 @@ public class Util {
         return min + R.nextInt(max - min);
     }
 
+    public static String nextString(int len) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            char c;
+            if (i == 0 && nextBoolean()) {
+                c =  (char) nextInt('A', 'Z' + 1);
+            } else {
+                c = (char) nextInt('a', 'z' + 1);
+            }
+            builder.append(c);
+        }
+        return builder.toString();
+    }
+
     public static boolean nextBoolean() {
         return R.nextBoolean();
     }
@@ -119,5 +133,6 @@ public class Util {
     public static void print() {
         pw.flush();
     }
+
 
 }

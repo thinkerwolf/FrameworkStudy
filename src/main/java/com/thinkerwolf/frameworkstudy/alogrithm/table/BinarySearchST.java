@@ -109,7 +109,7 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
     }
 
     @Override
-    public boolean contains(K key) {
+    public boolean containsKey(K key) {
         return rank(key) < size;
     }
 
@@ -228,6 +228,9 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         }
         int lo = 0;
         int hi = size - 1;
+        if (key.compareTo(keys[hi]) > 0) {
+            return size;
+        }
         while (lo <= hi) {
             int mid = lo + (hi - lo) / 2;
             int cmp = key.compareTo(keys[mid]);

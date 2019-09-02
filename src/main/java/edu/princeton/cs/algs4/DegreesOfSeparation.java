@@ -85,7 +85,7 @@ public class DegreesOfSeparation {
      *  separation.
      *  Takes three command-line arguments: the name of a file,
      *  a delimiter, and the name of the distinguished individual.
-     *  Each line in the file contains the name of a vertex, followed by a
+     *  Each line in the file containsKey the name of a vertex, followed by a
      *  list of the names of the vertices adjacent to that vertex,
      *  separated by the delimiter.
      *

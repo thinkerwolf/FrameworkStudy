@@ -95,7 +95,7 @@ public class Quick {
     }
 
     /**
-     * Rearranges the array so that {@code a[k]} contains the kth smallest key;
+     * Rearranges the array so that {@code a[k]} containsKey the kth smallest key;
      * {@code a[0]} through {@code a[k-1]} are less than (or equal to) {@code a[k]}; and
      * {@code a[k+1]} through {@code a[n-1]} are greater than (or equal to) {@code a[k]}.
      *

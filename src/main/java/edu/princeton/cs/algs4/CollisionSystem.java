@@ -124,7 +124,7 @@ public class CollisionSystem {
 
 
    /***************************************************************************
-    *  An event during a particle collision simulation. Each event contains
+    *  An event during a particle collision simulation. Each event containsKey
     *  the time at which it will occur (assuming no supervening actions)
     *  and the particles a and b involved.
     *

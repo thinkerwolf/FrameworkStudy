@@ -116,7 +116,7 @@ public class NFA {
         // Compute possible NFA states for txt[i+1]
         for (int i = 0; i < txt.length(); i++) {
             if (txt.charAt(i) == '*' || txt.charAt(i) == '|' || txt.charAt(i) == '(' || txt.charAt(i) == ')')
-                throw new IllegalArgumentException("text contains the metacharacter '" + txt.charAt(i) + "'");
+                throw new IllegalArgumentException("text containsKey the metacharacter '" + txt.charAt(i) + "'");
 
             Bag<Integer> match = new Bag<Integer>();
             for (int v : pc) {
