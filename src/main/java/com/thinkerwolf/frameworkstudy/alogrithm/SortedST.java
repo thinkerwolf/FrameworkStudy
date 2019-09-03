@@ -14,7 +14,9 @@ public interface SortedST<K, V> extends ST <K, V> {
      * @param toKey
      * @return
      */
-    SortedST <K, V> subST(K fromKey, K toKey);
+    default SortedST <K, V> subST(K fromKey, K toKey) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * 首key

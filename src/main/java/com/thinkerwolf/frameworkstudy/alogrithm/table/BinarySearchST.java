@@ -264,11 +264,11 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
 
     public static void main(String[] args) {
         BinarySearchST <Integer, String> st = new BinarySearchST <>(16);
-
-        Random r = new Random();
-        for (int i = 1; i <= 20; i++) {
-            int key = r.nextInt(20);
-            st.put(key, "val" + key);
+        int[] keyArr = new int[]{
+                19, 7, 14, 7, 19, 8, 11, 18, 16, 8, 17, 12, 11, 19, 14, 18, 7, 20, 9, 11
+        };
+        for (int i = 0; i < keyArr.length; i++) {
+            st.put(keyArr[i], "val" + keyArr[i]);
             st.put(i, "another" + i);
         }
         for (Integer k : st.keys()) {

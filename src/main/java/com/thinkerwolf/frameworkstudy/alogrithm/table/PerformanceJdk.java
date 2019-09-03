@@ -4,7 +4,6 @@ import com.thinkerwolf.frameworkstudy.alogrithm.Util;
 import org.apache.commons.lang.time.StopWatch;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -17,7 +16,7 @@ public class PerformanceJdk {
     static Pattern pattern = Pattern.compile("[a-zA-Z0-9]+");
 
     public static void main(String[] args) {
-        Map <String, Integer> st = new ConcurrentHashMap <>();
+        Map <String, Integer> st = new TreeMap <>();
         List <String> list = Performance.getRandomKeys(100000);
 
         StopWatch sw = new StopWatch();
@@ -33,7 +32,9 @@ public class PerformanceJdk {
         for (int i = 0, max = getKeys.size(); i < max; i++) {
             getKeys.add(Util.nextString(4));
         }
+
         Collections.shuffle(getKeys);
+        Collections.sort(getKeys);
 
         sw.reset();
         sw.start();

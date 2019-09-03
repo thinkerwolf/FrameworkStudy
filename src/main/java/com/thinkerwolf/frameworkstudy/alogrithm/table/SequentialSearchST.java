@@ -129,6 +129,20 @@ public class SequentialSearchST<K, V> implements ST <K, V>, Serializable, Clonea
         return node(key) != null;
     }
 
+    @Override
+    public long memoryUsage() {
+        long m = 0;
+        Entry <K, V> en = head;
+        while (en != null) {
+            m += 2;
+            if (en.next != null) {
+                m += 1;
+            }
+            en = en.next;
+        }
+        return m;
+    }
+
     class Keys extends AbstractCollection <K> {
 
         @Override

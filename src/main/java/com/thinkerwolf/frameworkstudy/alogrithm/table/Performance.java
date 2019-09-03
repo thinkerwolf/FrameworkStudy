@@ -8,7 +8,10 @@ import org.apache.commons.lang.time.StopWatch;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +24,7 @@ public class Performance {
 
     static Pattern pattern = Pattern.compile("[a-zA-Z0-9]+");
 
-    public static List<String> getKeys() {
+    public static List <String> getKeys() {
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("book.txt");
         List <String> list = new LinkedList <>();
         try {
@@ -42,8 +45,8 @@ public class Performance {
         return list;
     }
 
-    public static List<String> getRandomKeys(int size) {
-        List<String> list = new LinkedList<String>();
+    public static List <String> getRandomKeys(int size) {
+        List <String> list = new LinkedList <String>();
         for (int i = 0; i < size; i++) {
             list.add(Util.nextString(Util.nextInt(5, 10)));
         }
@@ -51,7 +54,7 @@ public class Performance {
     }
 
     public static void main(String[] args) {
-        ST <String, Integer> st = new ItemBinarySearchST <>(16);
+        ST <String, Integer> st = new BinaryTreeST <>();
         List <String> list = getRandomKeys(100000);
 
         StopWatch sw = new StopWatch();
@@ -64,11 +67,12 @@ public class Performance {
         System.out.println("Put: " + st.getClass().getSimpleName() + ", num = " + list.size() + ", spendTime = " + sw.getTime() + ", size = " + st.size());
 
 
-        List <String> getKeys = new ArrayList<>(list.subList(list.size() / 8, list.size() / 2));
+        List <String> getKeys = new ArrayList <>(list.subList(list.size() / 8, list.size() / 2));
         for (int i = 0, max = getKeys.size(); i < max; i++) {
             getKeys.add(Util.nextString(4));
         }
         Collections.shuffle(getKeys);
+//        Collections.sort(getKeys);
 
         sw.reset();
         sw.start();

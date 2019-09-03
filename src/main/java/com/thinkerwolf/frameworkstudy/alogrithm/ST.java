@@ -48,11 +48,36 @@ public interface ST<K, V> {
      */
     boolean isEmpty();
 
-    Collection<K> keys();
+    /**
+     * 返回Key集合
+     *
+     * @return
+     */
+    Collection <K> keys();
 
-    Collection<V> values();
+    /**
+     * 返回值集合
+     *
+     * @return
+     */
+    Collection <V> values();
 
+    /**
+     * 是否存在key
+     *
+     * @param key
+     * @return
+     */
     boolean containsKey(K key);
+
+    /**
+     * 内存使用
+     *
+     * @return
+     */
+    default long memoryUsage() {
+        return 0;
+    }
 
     /**
      * 符号表的数据存储单位
