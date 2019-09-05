@@ -4,9 +4,7 @@ import com.thinkerwolf.frameworkstudy.alogrithm.ST;
 import com.thinkerwolf.frameworkstudy.alogrithm.SortedST;
 import com.thinkerwolf.frameworkstudy.alogrithm.Util;
 
-import java.util.Collection;
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * 二叉查找树实现的<strong>符号表</strong>
@@ -17,9 +15,9 @@ import java.util.LinkedList;
  * @param <V>
  * @author wukai
  */
-public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V> implements SortedST <K, V> {
+public class BinaryTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> implements SortedST<K, V> {
     private transient int size;
-    private transient Entry <K, V> root;
+    private transient Entry<K, V> root;
 
 
     @Override
@@ -27,7 +25,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
         if (key == null || value == null) {
             throw new NullPointerException();
         }
-        Entry <K, V> en = root;
+        Entry<K, V> en = root;
         while (en != null) {
             int cmp = key.compareTo(en.getKey());
             if (cmp == 0) {
@@ -45,7 +43,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
             }
         }
         if (en == null) {
-            root = new Entry <>(key, value, null, null);
+            root = new Entry<>(key, value, null, null);
             size++;
             return null;
         }
@@ -56,9 +54,9 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
             en.setValue(value);
             return oldVal;
         } else if (cmp < 0) {
-            en.left = new Entry <>(key, value, null, null);
+            en.left = new Entry<>(key, value, null, null);
         } else {
-            en.right = new Entry <>(key, value, null, null);
+            en.right = new Entry<>(key, value, null, null);
         }
         size++;
         return null;
@@ -69,7 +67,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
         if (isEmpty()) {
             return null;
         }
-        Entry <K, V> en = root;
+        Entry<K, V> en = root;
         while (en != null) {
             int cmp = key.compareTo(en.getKey());
             if (cmp > 0) {
@@ -88,7 +86,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
         if (isEmpty()) {
             return null;
         }
-        Entry <K, V> en = deleteNormal(key);
+        Entry<K, V> en = deleteNormal(key);
         if (en != null) {
             size--;
         }
@@ -104,18 +102,18 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
     }
 
     @Override
-    public Collection <K> keys() {
+    public Collection<K> keys() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Collection <V> values() {
+    public Collection<V> values() {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean containsKey(K key) {
-        Entry <K, V> en = innerFind(root, key);
+        Entry<K, V> en = innerFind(root, key);
         if (en == null) {
             return false;
         }
@@ -125,7 +123,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
 
     @Override
     public K firstKey() {
-        Entry <K, V> en = root;
+        Entry<K, V> en = root;
         while (en != null) {
             if (en.left == null) {
                 return en.getKey();
@@ -138,7 +136,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
 
     @Override
     public K lastKey() {
-        Entry <K, V> en = root;
+        Entry<K, V> en = root;
         while (en != null) {
             if (en.right == null) {
                 return en.getKey();
@@ -155,10 +153,10 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
             return 0;
         }
         long m = 0;
-        Deque <Entry <K, V>> stack = new LinkedList <>();
+        Deque<Entry<K, V>> stack = new LinkedList<>();
         stack.add(root);
         while (stack.size() > 0) {
-            Entry <K, V> en = stack.pollLast();
+            Entry<K, V> en = stack.pollLast();
             m += 2;
             if (en.left != null) {
                 m += 1;
@@ -177,8 +175,8 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
         StringBuilder builder = new StringBuilder();
         // 中序遍历
         builder.append('{');
-        LinkedList <Entry <K, V>> stack = new LinkedList <>();
-        Entry <K, V> p = root;
+        LinkedList<Entry<K, V>> stack = new LinkedList<>();
+        Entry<K, V> p = root;
         do {
             while (p != null) {
                 stack.add(p);
@@ -211,7 +209,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
         if (root == null) {
             return null;
         }
-        Entry <K, V> en = root;
+        Entry<K, V> en = root;
         while (en != null) {
             if (en.left == null && en.right == null) {
                 return en.getKey();
@@ -230,7 +228,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
      * @param en
      * @param builder
      */
-    private void inorderTraversalToString(Entry <K, V> en, StringBuilder builder) {
+    private void inorderTraversalToString(Entry<K, V> en, StringBuilder builder) {
         if (en == null) {
             return;
         }
@@ -249,7 +247,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
      * @param key
      * @return
      */
-    private Entry <K, V> innerFind(Entry <K, V> en, K key) {
+    private Entry<K, V> innerFind(Entry<K, V> en, K key) {
         if (en == null) {
             return null;
         }
@@ -270,7 +268,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
      * @param key
      * @return
      */
-    private Entry <K, V> delete(Entry <K, V> en, K key) {
+    private Entry<K, V> delete(Entry<K, V> en, K key) {
         if (en == null) {
             return null;
         }
@@ -286,7 +284,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
             if (en.left == null) {
                 return en.right;
             }
-            Entry <K, V> t = en;
+            Entry<K, V> t = en;
             en = min(t.right);
             en.right = deleteMin(t.right);
             en.left = t.left;
@@ -300,11 +298,11 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
      * @param key key
      * @return 被删除的元素
      */
-    private Entry <K, V> deleteNormal(K key) {
+    private Entry<K, V> deleteNormal(K key) {
         // 需要删除的元素
-        Entry <K, V> en = root;
+        Entry<K, V> en = root;
         // 需要删除元素的父节点
-        Entry <K, V> parent = root;
+        Entry<K, V> parent = root;
         while (en != null) {
             int cmp = key.compareTo(en.getKey());
             if (cmp < 0) {
@@ -317,7 +315,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
                 break;
             }
         }
-        Entry <K, V> t = en;
+        Entry<K, V> t = en;
         if (t == null) {
             return null;
         }
@@ -346,8 +344,8 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
         return t;
     }
 
-    private Entry <K, V> min(Entry <K, V> root) {
-        Entry <K, V> t = root;
+    private Entry<K, V> min(Entry<K, V> root) {
+        Entry<K, V> t = root;
         while (t != null) {
             if (t.left == null) {
                 return t;
@@ -363,7 +361,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
      * @param root 根节点
      * @return 删除后的root
      */
-    private Entry <K, V> deleteMin(Entry <K, V> root) {
+    private Entry<K, V> deleteMin(Entry<K, V> root) {
         if (root == null) {
             return null;
         }
@@ -380,12 +378,12 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
      * @param root 根节点
      * @return 删除后的根节点
      */
-    private Entry <K, V> deleteMinNormal(Entry <K, V> root) {
+    private Entry<K, V> deleteMinNormal(Entry<K, V> root) {
         if (root == null) {
             return null;
         }
-        Entry <K, V> en = root;
-        Entry <K, V> parent = root;
+        Entry<K, V> en = root;
+        Entry<K, V> parent = root;
         while (en != null) {
             if (en.left == null) {
                 break;
@@ -412,7 +410,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
      * @param root
      * @return
      */
-    private int depth(Entry <K, V> root) {
+    private int depth(Entry<K, V> root) {
         if (root == null) {
             return 0;
         }
@@ -421,14 +419,75 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
         return Math.max(l, r) + 1;
     }
 
+    /**
+     * 是否是二叉树
+     *
+     * @param root
+     * @return
+     */
+    private boolean isBinaryTree(Entry<K, V> root) {
+        if (root == null) {
+            return true;
+        }
+        List<K> list = new ArrayList<>(size);
+        Deque<Entry<K, V>> stack = new LinkedList<>();
+        stack.add(root);
+        while (!stack.isEmpty()) {
+            Entry<K, V> en = stack.pop();
+            if (list.contains(en.getKey())) {
+                return false;
+            }
+            list.add(en.getKey());
+            if (en.left != null) {
+                stack.push(en.left);
+            }
+            if (en.right != null) {
+                stack.push(en.right);
+            }
+        }
+        return true;
+    }
 
-    static final class Entry<K extends Comparable <K>, V> implements ST.Entry <K, V> {
+    /**
+     * 是否是排序的树
+     *
+     * @param root
+     * @return
+     */
+    private boolean isSorted(Entry<K, V> root) {
+        // 中序遍历
+        Deque<Entry<K, V>> stack = new LinkedList<>();
+        stack.add(root);
+        Entry<K, V> p = root;
+        K k = null;
+        do {
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+            if (!stack.isEmpty()) {
+                p = stack.pop();
+                if (k != null) {
+                    int cmp = p.getKey().compareTo(k);
+                    if (cmp < 0) {
+                        return false;
+                    }
+                }
+                k = p.getKey();
+                p = p.right;
+            }
+        } while (p != null && !stack.isEmpty());
+        return true;
+    }
+
+
+    static final class Entry<K extends Comparable<K>, V> implements ST.Entry<K, V> {
         K key;
         V val;
-        Entry <K, V> left;
-        Entry <K, V> right;
+        Entry<K, V> left;
+        Entry<K, V> right;
 
-        Entry(K key, V val, Entry <K, V> left, Entry <K, V> right) {
+        Entry(K key, V val, Entry<K, V> left, Entry<K, V> right) {
             this.key = key;
             this.val = val;
             this.left = left;
@@ -457,7 +516,7 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
     }
 
     public static void main(String[] args) {
-        SortedST <Integer, String> st = new BinaryTreeST <>();
+        BinaryTreeST<Integer, String> st = new BinaryTreeST<>();
         int[] keyArr = new int[]{
                 19, 7, 14, 7, 19, 8, 18, 16, 8, 17, 12, 11, 19, 14, 18, 7, 20, 9, 11
         };
@@ -467,6 +526,9 @@ public class BinaryTreeST<K extends Comparable <K>, V> extends AbstractST <K, V>
         }
         System.out.println(st);
         System.out.println(st.delete(7));
+
+        System.out.println(st.isBinaryTree(st.root));
+        System.out.println(st.isSorted(st.root));
         try {
             System.out.println(st);
         } catch (Error e) {

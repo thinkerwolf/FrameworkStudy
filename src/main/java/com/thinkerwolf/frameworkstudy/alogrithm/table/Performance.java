@@ -64,7 +64,7 @@ public class Performance {
             st.put(s, pos++);
         }
         sw.stop();
-        System.out.println("Put: " + st.getClass().getSimpleName() + ", num = " + list.size() + ", spendTime = " + sw.getTime() + ", size = " + st.size());
+        System.out.println("Put: " + st.getClass().getSimpleName() + ", num = " + list.size() + ", spendTime = " + sw.getTime() + ", kvsize = " + st.size());
 
 
         List <String> getKeys = new ArrayList <>(list.subList(list.size() / 8, list.size() / 2));
