@@ -19,6 +19,8 @@ public class BinaryTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> i
     private transient int size;
     private transient Entry<K, V> root;
 
+    public BinaryTreeST() {
+    }
 
     @Override
     public V put(K key, V value) {

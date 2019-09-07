@@ -11,21 +11,23 @@ import java.util.Collection;
  * @param <K>
  * @param <V>
  */
-public class ArrayST<K, V> extends AbstractST <K, V> {
-
+public class ArrayST<K, V> extends AbstractST<K, V> {
+    private static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     /**
      * 查找表大小
      */
     private transient int size;
 
-    private transient Entry <K, V>[] entries;
+    private transient Entry<K, V>[] entries;
 
     public ArrayST() {
-        this.entries = new Entry[0];
     }
 
     public ArrayST(int size) {
+        if (size < 0) {
+            throw new IllegalArgumentException("Illegal size : " + size);
+        }
         this.entries = new Entry[size];
     }
 
@@ -34,15 +36,18 @@ public class ArrayST<K, V> extends AbstractST <K, V> {
         if (key == null || value == null) {
             throw new NullPointerException();
         }
+        if (entries == null) {
+            this.entries = new Entry[DEFAULT_INITIAL_CAPACITY];
+        }
         int index = find(key);
         if (index >= 0) {
-            Entry <K, V> en = entries[index];
+            Entry<K, V> en = entries[index];
             V oldVal = en.getValue();
             en.setValue(value);
             return oldVal;
         }
         ensureCapacity(size + 1);
-        entries[size] = new Entry <>(key, value);
+        entries[size] = new Entry<>(key, value);
         size++;
         return null;
     }
@@ -88,12 +93,12 @@ public class ArrayST<K, V> extends AbstractST <K, V> {
     }
 
     @Override
-    public Collection <K> keys() {
+    public Collection<K> keys() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Collection <V> values() {
+    public Collection<V> values() {
         throw new UnsupportedOperationException();
     }
 
@@ -142,7 +147,7 @@ public class ArrayST<K, V> extends AbstractST <K, V> {
         return builder.toString();
     }
 
-    private static class Entry<K, V> implements ST.Entry <K, V> {
+    private static class Entry<K, V> implements ST.Entry<K, V> {
 
         private K key;
         private V val;
@@ -169,7 +174,7 @@ public class ArrayST<K, V> extends AbstractST <K, V> {
     }
 
     public static void main(String[] args) {
-        ArrayST <Integer, String> st = new ArrayST <>(5);
+        ArrayST<Integer, String> st = new ArrayST<>(5);
         for (int i = 0; i < 20; i++) {
             st.put(i, "val" + i);
         }

@@ -13,7 +13,7 @@ import java.util.*;
  * @param <V>
  * @author wukai
  */
-public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST <K, V> implements SortedST <K, V> {
+public class ItemBinarySearchST<K extends Comparable<K>, V> extends AbstractST<K, V> implements SortedST<K, V> {
 
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     /**
@@ -21,7 +21,7 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
      */
     private int size;
 
-    private Entry <K, V>[] entries;
+    private Entry<K, V>[] entries;
 
     public ItemBinarySearchST(int capacity) {
         if (capacity < 0) {
@@ -30,10 +30,17 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         this.entries = new Entry[capacity];
     }
 
+    public ItemBinarySearchST() {
+
+    }
+
     @Override
     public V put(K key, V value) {
         if (key == null || value == null) {
             throw new NullPointerException();
+        }
+        if (entries == null) {
+            this.entries = new Entry[1 << 4];
         }
         int index = rank(key);
         // 找到的位置在队列中
@@ -46,7 +53,7 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         for (int i = size; i > index; i--) {
             entries[i] = entries[i - 1];
         }
-        Entry <K, V> en = new Entry <>(key, value);
+        Entry<K, V> en = new Entry<>(key, value);
         entries[index] = en;
         size++;
         return null;
@@ -83,12 +90,12 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
     }
 
     @Override
-    public Collection <K> keys() {
+    public Collection<K> keys() {
         return new Keys();
     }
 
     @Override
-    public Collection <V> values() {
+    public Collection<V> values() {
         return new Values();
     }
 
@@ -98,8 +105,8 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
     }
 
     @Override
-    public SortedST <K, V> subST(K fromKey, K toKey) {
-        return new AscendingSubST <>(this, fromKey, toKey, true, true);
+    public SortedST<K, V> subST(K fromKey, K toKey) {
+        return new AscendingSubST<>(this, fromKey, toKey, true, true);
     }
 
     @Override
@@ -162,13 +169,13 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         return builder.toString();
     }
 
-    static final class AscendingSubST<K extends Comparable <K>, V> extends AbstractST <K, V> implements SortedST <K, V> {
-        final ItemBinarySearchST <K, V> m;
+    static final class AscendingSubST<K extends Comparable<K>, V> extends AbstractST<K, V> implements SortedST<K, V> {
+        final ItemBinarySearchST<K, V> m;
 
         final K lo, hi;
         final boolean loInclusive, hiInclusive;
 
-        AscendingSubST(ItemBinarySearchST <K, V> m, K lo, K hi, boolean loInclusive, boolean hiInclusive) {
+        AscendingSubST(ItemBinarySearchST<K, V> m, K lo, K hi, boolean loInclusive, boolean hiInclusive) {
             this.m = m;
             this.lo = lo;
             this.hi = hi;
@@ -211,12 +218,12 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         }
 
         @Override
-        public Collection <K> keys() {
+        public Collection<K> keys() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Collection <V> values() {
+        public Collection<V> values() {
             throw new UnsupportedOperationException();
         }
 
@@ -229,8 +236,8 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         }
 
         @Override
-        public SortedST <K, V> subST(K fromKey, K toKey) {
-            return new AscendingSubST <K, V>(m, fromKey, toKey, true, true);
+        public SortedST<K, V> subST(K fromKey, K toKey) {
+            return new AscendingSubST<K, V>(m, fromKey, toKey, true, true);
         }
 
         @Override
@@ -317,10 +324,10 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         }
     }
 
-    class Keys extends AbstractCollection <K> {
+    class Keys extends AbstractCollection<K> {
 
         @Override
-        public Iterator <K> iterator() {
+        public Iterator<K> iterator() {
             return new KeysIterator();
         }
 
@@ -330,7 +337,7 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         }
     }
 
-    class KeysIterator implements Iterator <K> {
+    class KeysIterator implements Iterator<K> {
 
         int cursor;
 
@@ -359,10 +366,10 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         }
     }
 
-    class Values extends AbstractCollection <V> {
+    class Values extends AbstractCollection<V> {
 
         @Override
-        public Iterator <V> iterator() {
+        public Iterator<V> iterator() {
             return new ValueIterator();
         }
 
@@ -372,7 +379,7 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         }
     }
 
-    class ValueIterator implements Iterator <V> {
+    class ValueIterator implements Iterator<V> {
         private int cursor;
 
         public ValueIterator() {
@@ -413,7 +420,7 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
         }
     }
 
-    private static class Entry<K extends Comparable <K>, V> implements ST.Entry <K, V> {
+    private static class Entry<K extends Comparable<K>, V> implements ST.Entry<K, V> {
         K key;
         V val;
 
@@ -440,7 +447,7 @@ public class ItemBinarySearchST<K extends Comparable <K>, V> extends AbstractST 
 
 
     public static void main(String[] args) {
-        ItemBinarySearchST <Integer, String> st = new ItemBinarySearchST <>(16);
+        ItemBinarySearchST<Integer, String> st = new ItemBinarySearchST<>(16);
 
         Random r = new Random();
         for (int i = 1; i <= 20; i++) {

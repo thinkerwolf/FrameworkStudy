@@ -11,7 +11,9 @@ import java.util.*;
  * @param <V>
  * @author wukai
  */
-public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
+public class BinarySearchST<K extends Comparable<K>, V> implements ST<K, V> {
+
+    private static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;
 
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     /**
@@ -37,10 +39,18 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         this.vals = (V[]) new Object[capacity];
     }
 
+    public BinarySearchST() {
+
+    }
+
     @Override
     public V put(K key, V value) {
         if (key == null || value == null) {
             throw new NullPointerException();
+        }
+        if (keys == null || vals == null) {
+            this.keys = (K[]) new Comparable[DEFAULT_INITIAL_CAPACITY];
+            this.vals = (V[]) new Object[DEFAULT_INITIAL_CAPACITY];
         }
         int index = rank(key);
         // 找到的位置在队列中
@@ -99,12 +109,12 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
     }
 
     @Override
-    public Collection <K> keys() {
+    public Collection<K> keys() {
         return new Keys();
     }
 
     @Override
-    public Collection <V> values() {
+    public Collection<V> values() {
         return new Values();
     }
 
@@ -113,10 +123,10 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         return rank(key) < size;
     }
 
-    class Keys extends AbstractCollection <K> {
+    class Keys extends AbstractCollection<K> {
 
         @Override
-        public Iterator <K> iterator() {
+        public Iterator<K> iterator() {
             return new KeysIterator(keys);
         }
 
@@ -126,7 +136,7 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         }
     }
 
-    class KeysIterator implements Iterator <K> {
+    class KeysIterator implements Iterator<K> {
 
         int cursor;
         K[] keys;
@@ -157,10 +167,10 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         }
     }
 
-    class Values extends AbstractCollection <V> {
+    class Values extends AbstractCollection<V> {
 
         @Override
-        public Iterator <V> iterator() {
+        public Iterator<V> iterator() {
             return new ValueIterator(keys, vals);
         }
 
@@ -170,7 +180,7 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
         }
     }
 
-    class ValueIterator implements Iterator <V> {
+    class ValueIterator implements Iterator<V> {
         K[] keys;
         V[] vals;
         private int cursor;
@@ -263,7 +273,7 @@ public class BinarySearchST<K extends Comparable <K>, V> implements ST <K, V> {
     }
 
     public static void main(String[] args) {
-        BinarySearchST <Integer, String> st = new BinarySearchST <>(16);
+        BinarySearchST<Integer, String> st = new BinarySearchST<>(16);
         int[] keyArr = new int[]{
                 19, 7, 14, 7, 19, 8, 11, 18, 16, 8, 17, 12, 11, 19, 14, 18, 7, 20, 9, 11
         };

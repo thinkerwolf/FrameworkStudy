@@ -13,7 +13,9 @@ import java.util.Collection;
 public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
 
     private static final int DEFAULT_M = 3;
-
+    /**
+     * 树阶数
+     */
     private final int M;
 
     private Node<K, V> root;
@@ -52,9 +54,13 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
         if (key == null) {
             throw new NullPointerException();
         }
-        Node<K, V> n = root.delete(key);
-        if (n != null) {
-            this.root = n;
+        Node<K, V> node = root.delete(key);
+        if (node != null) {
+            if (!node.isLeaf() && node.kvsize == 0) {
+                this.root = ((InternalNode<K, V>) node).pointers[0];
+            } else {
+                this.root = node;
+            }
         }
         return null;
     }
@@ -85,6 +91,15 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
         System.out.println(builder.toString());
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        if (root != null) {
+            root.print(builder, 1);
+        }
+        return builder.toString();
+    }
+
     /**
      * 非叶结点
      *
@@ -108,21 +123,41 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
         }
 
         @Override
+        protected void check() {
+            super.check();
+            int num = 0;
+            boolean isNull = false;
+            for (int i = 0; i < pointers.length; i++) {
+                if (pointers[i] == null) {
+                    isNull = true;
+                } else {
+                    if (isNull) {
+                        throw new BTreeNodeException("Pointers with middle null ");
+                    }
+                    num++;
+                }
+            }
+            if (kvsize + 1 != num) {
+                throw new BTreeNodeException("Pointers'num != kvsize + 1");
+            }
+        }
+
+        @Override
         Entry<K, V> find(K key) {
             if (kvsize == 0) {
                 return null;
             }
-            for (int i = 0; i < kvsize; i++) {
-                Entry<K, V> e = kvs[i];
-                int cmp = key.compareTo(e.getKey());
-                if (cmp == 0) {
-                    return e;
-                }
-                if (cmp < 0) {
-                    return pointers[i].find(key);
-                }
+            int pos = findPos(this, key);
+            if (pos >= kvsize) {
+                return pointers[pos].find(key);
             }
-            return pointers[kvsize].find(key);
+            Entry<K, V> e = kvs[pos];
+            int cmp = key.compareTo(e.getKey());
+            if (cmp == 0) {
+                return e;
+            } else {
+                return pointers[pos].find(key);
+            }
         }
 
         @Override
@@ -218,6 +253,7 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
 
         @Override
         Node<K, V> delete(K key) {
+            check();
             int pos = -1;
             int lo = 0;
             int hi = kvsize - 1;
@@ -235,19 +271,47 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
                 }
             }
 
-            //TODO 节点在非叶子节点，转化成终端节点后再删除
+            // TODO 节点在非叶子节点，转化成终端节点后再删除
+            int minSize = (M + 1) / 2 - 1;
             if (pos >= 0) {
+                // 向下找到其相邻节点叶子节点并替换，替换后进行删除
+                Node<K, V> leftNode;
+                Node<K, V> rightNode;
+                if ((leftNode = findLeftLeafSide(pos)).kvsize > minSize) {
+                    // 直接删除并替换
+                    Entry<K, V> en = leftNode.kvs[leftNode.kvsize - 1];
+                    kvs[pos] = en;
+                    leftNode.delete(en.getKey());
+                    return null;
+                } else if ((rightNode = findRightLeafSide(pos)).kvsize > minSize) {
+                    // 直接删除并替换
+                    Entry<K, V> en = rightNode.kvs[0];
+                    kvs[pos] = en;
+                    rightNode.delete(en.getKey());
+                    return null;
+                }
 
-
-                return null;
+                if (leftNode.kvsize >= rightNode.kvsize) {
+                    Entry<K, V> en = leftNode.kvs[leftNode.kvsize - 1];
+                    leftNode.kvs[leftNode.kvsize - 1] = kvs[pos];
+                    kvs[pos] = en;
+                } else {
+                    Entry<K, V> en = rightNode.kvs[0];
+                    rightNode.kvs[0] = kvs[pos];
+                    kvs[pos] = en;
+                    pos++;
+                }
+                leftNode.check();
+                rightNode.check();
+                check();
+            } else {
+                // 没有找到，继续往子节点删除
+                pos = lo;
             }
 
-            // 没有找到，继续往子节点删除
-            pos = lo;
             Node<K, V> n = pointers[pos].delete(key);
             if (n != null) {
                 // 查看左右兄弟节点数量够借
-                int minSize = (M + 1) / 2 - 1;
                 if (n.kvsize >= minSize) {
                     return null;
                 }
@@ -264,28 +328,51 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
                         // 左边的兄弟借
                         Entry<K, V> borrowedKv = borrowedBro.kvs[borrowedBro.kvsize - 1];
                         borrowedBro.kvs[borrowedBro.kvsize - 1] = null;
-                        borrowedBro.kvsize--;
 
                         Entry<K, V> rootKv = kvs[pos - 1];
                         kvs[pos - 1] = borrowedKv;
 
                         n.entriesRightShift(0);
                         n.kvs[0] = rootKv;
-                        n.kvsize++;
 
+                        if (!n.isLeaf()) {
+                            InternalNode<K, V> borrowedBroInternal = (InternalNode<K, V>) borrowedBro;
+                            InternalNode<K, V> nInternal = (InternalNode<K, V>) n;
+                            Node<K, V> borrowedPointer = borrowedBroInternal.pointers[borrowedBro.kvsize];
+                            borrowedBroInternal.pointers[borrowedBro.kvsize] = null;
+                            nInternal.pointersRightShift(0);
+                            nInternal.pointers[0] = borrowedPointer;
+                        }
+
+                        borrowedBro.kvsize--;
+                        n.kvsize++;
                     } else {
                         // 右边的兄弟借
                         Entry<K, V> borrowedKv = borrowedBro.kvs[0];
                         borrowedBro.kvs[0] = null;
                         borrowedBro.entriesLeftShift(1);
-                        borrowedBro.kvsize--;
+
 
                         Entry<K, V> rootKv = kvs[pos];
                         kvs[pos] = borrowedKv;
 
                         n.kvs[n.kvsize] = rootKv;
+
+
+                        if (!n.isLeaf()) {
+                            InternalNode<K, V> borrowedBroInternal = (InternalNode<K, V>) borrowedBro;
+                            InternalNode<K, V> nInternal = (InternalNode<K, V>) n;
+                            Node<K, V> borrowedPointer = borrowedBroInternal.pointers[0];
+                            borrowedBroInternal.pointersLeftShift(1);
+                            nInternal.pointers[nInternal.kvsize + 1] = borrowedPointer;
+                        }
+
+                        borrowedBro.kvsize--;
                         n.kvsize++;
                     }
+
+                    borrowedBro.check();
+                    n.check();
                     return null;
                 }
 
@@ -304,24 +391,62 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
 
                 kvsize--;
 
+                bro.check();
+                n.check();
+                check();
+
                 Node<K, V> returnNode = this;
-                if (!n.isLeaf()) {
+                if (!n.isLeaf() && kvsize < minSize) {
                     Node[] npointers = ((InternalNode) n).pointers;
                     for (int i = 0; i < n.kvsize + 1; i++) {
                         for (int j = 0; j < npointers[i].kvsize; j++) {
                             Entry<K, V> en = npointers[i].kvs[j];
                             Node<K, V> node = returnNode.insert(en.getKey(), en.getValue());
                             if (node != null) {
+                                node.check();
                                 returnNode = node;
                             }
                         }
                     }
                 }
-
                 return returnNode;
             }
 
             return null;
+        }
+
+        /**
+         * 找到左相邻叶子节点元素
+         *
+         * @param idx
+         * @return
+         */
+        private Node<K, V> findLeftLeafSide(int idx) {
+            Node<K, V> pointer = pointers[idx];
+            while (pointer != null) {
+                if (pointer.isLeaf()) {
+                    break;
+                }
+                pointer = ((InternalNode<K, V>) pointer).pointers[pointer.kvsize];
+            }
+            return pointer;
+        }
+
+        /**
+         * 找到右相邻叶子节点元素
+         *
+         * @param idx
+         * @return
+         */
+        private Node<K, V> findRightLeafSide(int idx) {
+            Node<K, V> pointer = pointers[idx + 1];
+            while (pointer != null) {
+                if (pointer.isLeaf()) {
+                    break;
+                }
+                pointer = ((InternalNode<K, V>) pointer).pointers[0];
+            }
+            return pointer;
         }
 
         @Override
@@ -357,16 +482,37 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
         }
 
         @Override
+        protected void check() {
+            boolean isNull = false;
+            int num = 0;
+            for (int i = 0; i < kvs.length; i++) {
+                if (kvs[i] == null) {
+                    isNull = true;
+                } else {
+                    if (isNull) {
+                        throw new BTreeNodeException("Kvs with middle null ");
+                    }
+                    num++;
+                }
+            }
+            if (kvsize != num) {
+                throw new BTreeNodeException("kvs'num != kvsize");
+            }
+        }
+
+        @Override
         Entry<K, V> find(K key) {
             if (kvsize == 0) {
                 return null;
             }
-            for (int i = 0; i < kvsize; i++) {
-                Entry<K, V> e = kvs[i];
-                int cmp = key.compareTo(e.getKey());
-                if (cmp == 0) {
-                    return e;
-                }
+            int pos = findPos(this, key);
+            if (pos >= kvsize) {
+                return null;
+            }
+            Entry<K, V> e = kvs[pos];
+            int cmp = key.compareTo(e.getKey());
+            if (cmp == 0) {
+                return e;
             }
             return null;
         }
@@ -476,6 +622,24 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
          */
         abstract Node<K, V> delete(K key);
 
+        protected void check() {
+            boolean isNull = false;
+            int num = 0;
+            for (int i = 0; i < kvs.length; i++) {
+                if (kvs[i] == null) {
+                    isNull = true;
+                } else {
+                    if (isNull) {
+                        throw new BTreeNodeException("Kvs with middle null ");
+                    }
+                    num++;
+                }
+            }
+            if (kvsize != num) {
+                throw new BTreeNodeException("kvs'num != kvsize");
+            }
+        }
+
         /**
          * 插入时，如果键值存在进行替换；如果键值不存在，则找到pointer的位置。（二分法）
          *
@@ -528,6 +692,25 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
                 }
             }
             return -1;
+        }
+
+        int findPos(Node<K, V> root, K key) {
+            int lo = 0;
+            int hi = root.kvsize - 1;
+            Entry<K, V>[] kvs = root.kvs;
+            while (lo <= hi) {
+                int mid = lo + (hi - lo) / 2;
+                Entry<K, V> en = kvs[mid];
+                int cmp = key.compareTo(en.getKey());
+                if (cmp == 0) {
+                    return mid;
+                } else if (cmp > 0) {
+                    lo = mid + 1;
+                } else {
+                    hi = mid - 1;
+                }
+            }
+            return lo;
         }
 
         /**
@@ -631,7 +814,7 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
                 20, 30, 50, 52, 60, 68, 70,
                 20, 30, 50, 52, 60, 68, 70,
                 17, 18, 19, 6, 7, 8};
-        BTreeST<Integer, String> st = new BTreeST<>(3);
+        BTreeST<Integer, String> st = new BTreeST<>(5);
 
         for (int i = 0, len = keys.length; i < len; i++) {
             if (i == len - 1) {
@@ -643,14 +826,16 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
         System.out.println(st.get(52));
         st.print();
 
-        st.delete(17);
-        st.delete(6);
+
+        int[] deleteKeys = new int[]{
+                20, 30, 50, 52, 60, 68, 70,
+                17, 18, 19, 6, 7, 8};
+        for (int key : deleteKeys) {
+            st.delete(key);
+        }
 
         st.print();
 
-        st.delete(18);
-
-        st.print();
     }
 
 

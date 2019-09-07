@@ -17,7 +17,7 @@ public class PerformanceJdk {
 
     public static void main(String[] args) {
         Map <String, Integer> st = new TreeMap <>();
-        List <String> list = Performance.getRandomKeys(100000);
+        List <String> list = Performance.getRandomKeys(1000000);
 
         StopWatch sw = new StopWatch();
         sw.start();
