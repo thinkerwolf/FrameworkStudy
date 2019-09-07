@@ -248,10 +248,13 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
             if (n != null) {
                 // 查看左右兄弟节点数量够借
                 int minSize = (M + 1) / 2 - 1;
+                if (n.kvsize >= minSize) {
+                    return null;
+                }
                 int borrowedBroPos = -1;
                 if (pos > 0 && pointers[pos - 1].kvsize > minSize) {
                     borrowedBroPos = pos - 1;
-                } else if (pos < size && pointers[pos + 1].kvsize > minSize) {
+                } else if (pos < kvsize && pointers[pos + 1].kvsize > minSize) {
                     borrowedBroPos = pos + 1;
                 }
 
@@ -301,9 +304,21 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
 
                 kvsize--;
 
-                if (kvsize < minSize) {
-                    return this;
+                Node<K, V> returnNode = this;
+                if (!n.isLeaf()) {
+                    Node[] npointers = ((InternalNode) n).pointers;
+                    for (int i = 0; i < n.kvsize + 1; i++) {
+                        for (int j = 0; j < npointers[i].kvsize; j++) {
+                            Entry<K, V> en = npointers[i].kvs[j];
+                            Node<K, V> node = returnNode.insert(en.getKey(), en.getValue());
+                            if (node != null) {
+                                returnNode = node;
+                            }
+                        }
+                    }
                 }
+
+                return returnNode;
             }
 
             return null;
@@ -633,6 +648,9 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
 
         st.print();
 
+        st.delete(18);
+
+        st.print();
     }
 
 
