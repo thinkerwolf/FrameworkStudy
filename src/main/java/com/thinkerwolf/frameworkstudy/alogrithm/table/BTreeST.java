@@ -5,7 +5,10 @@ import com.thinkerwolf.frameworkstudy.alogrithm.ST;
 import java.util.Collection;
 
 /**
- * BTree实现的查找表
+ * BTree(高度平衡二叉树)实现的查找表
+ * <p>
+ * 内部牵扯很多数组的复制操作，效率可能没有普通的二叉树好。
+ * </p>
  *
  * @param <K>
  * @param <V>
@@ -14,7 +17,7 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
 
     private static final int DEFAULT_M = 3;
     /**
-     * 树阶数
+     * 树阶数(结点数量)
      */
     private final int M;
 
