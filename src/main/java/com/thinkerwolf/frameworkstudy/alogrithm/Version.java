@@ -1,5 +1,7 @@
 package com.thinkerwolf.frameworkstudy.alogrithm;
 
+import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+
 /**
  * 版本
  * @author wukai

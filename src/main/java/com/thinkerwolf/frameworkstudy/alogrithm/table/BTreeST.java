@@ -399,7 +399,7 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
                 check();
 
                 Node<K, V> returnNode = this;
-                if (!n.isLeaf() && kvsize < minSize) {
+                if (!n.isLeaf() && kvsize <= 0) {
                     Node[] npointers = ((InternalNode) n).pointers;
                     for (int i = 0; i < n.kvsize + 1; i++) {
                         for (int j = 0; j < npointers[i].kvsize; j++) {
@@ -412,6 +412,7 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
                         }
                     }
                 }
+
                 return returnNode;
             }
 
@@ -829,13 +830,17 @@ public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
         System.out.println(st.get(52));
         st.print();
 
+        System.out.println(st.size());
 
         int[] deleteKeys = new int[]{
                 20, 30, 50, 52, 60, 68, 70,
                 17, 18, 19, 6, 7, 8};
         for (int key : deleteKeys) {
             st.delete(key);
+            System.out.println(st.size());
         }
+
+        System.out.println(st.size());
 
         st.print();
 

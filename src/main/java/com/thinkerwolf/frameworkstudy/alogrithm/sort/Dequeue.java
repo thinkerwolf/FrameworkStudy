@@ -1,8 +1,8 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.sort;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.Util;
+import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
 
-import static com.thinkerwolf.frameworkstudy.alogrithm.Util.*;
+import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.*;
 
 /**
  * 出列排序

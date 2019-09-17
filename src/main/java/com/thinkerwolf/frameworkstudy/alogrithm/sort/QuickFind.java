@@ -1,6 +1,6 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.sort;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.Util;
+import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
 
 /**
  * 利用快速排序查找

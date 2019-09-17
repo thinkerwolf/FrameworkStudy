@@ -1,7 +1,7 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.table;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.ST;
-import com.thinkerwolf.frameworkstudy.alogrithm.Util;
+import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;

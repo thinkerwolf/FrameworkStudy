@@ -2,7 +2,7 @@ package com.thinkerwolf.frameworkstudy.alogrithm.sort;
 
 import edu.princeton.cs.algs4.StdRandom;
 
-import static com.thinkerwolf.frameworkstudy.alogrithm.Util.*;
+import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.*;
 
 public class Quick {
 

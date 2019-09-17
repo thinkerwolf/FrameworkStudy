@@ -1,7 +1,7 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.sort;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.PQ;
-import com.thinkerwolf.frameworkstudy.alogrithm.Util;
+import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
 
 import java.util.Comparator;
 import java.util.Iterator;

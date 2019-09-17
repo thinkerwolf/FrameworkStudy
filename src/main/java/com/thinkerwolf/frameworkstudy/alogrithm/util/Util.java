@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.alogrithm;
+package com.thinkerwolf.frameworkstudy.alogrithm.util;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -102,7 +102,7 @@ public class Util {
         for (int i = 0; i < len; i++) {
             char c;
             if (i == 0 && nextBoolean()) {
-                c =  (char) nextInt('A', 'Z' + 1);
+                c = (char) nextInt('A', 'Z' + 1);
             } else {
                 c = (char) nextInt('a', 'z' + 1);
             }
@@ -113,6 +113,30 @@ public class Util {
 
     public static boolean nextBoolean() {
         return R.nextBoolean();
+    }
+
+    public static void isTrue(boolean expression, String message) {
+        if (!expression) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    public static void isFalse(boolean expression, String message) {
+        if (expression) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    public static void isNull(Object obj, String message) {
+        if (obj != null) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    public static void notNull(Object obj, String message) {
+        if (obj == null) {
+            throw new IllegalArgumentException(message);
+        }
     }
 
     public static void println() {
