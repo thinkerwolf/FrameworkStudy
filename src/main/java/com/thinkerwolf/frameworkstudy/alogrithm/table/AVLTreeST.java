@@ -83,11 +83,9 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
             int cmp = compare(key, t.getKey());
             if (cmp < 0) {
                 t = t.left;
-            }
-            if (cmp > 0) {
+            } else if (cmp > 0) {
                 t = t.right;
             } else {
-                // 找到删除
                 d = t;
                 break;
             }
@@ -117,7 +115,7 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
 
     @Override
     public boolean containsKey(K key) {
-        return false;
+        return get(key) != null;
     }
 
     private int compare(K k1, K k2) {
@@ -134,23 +132,64 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
         if (x == null) {
             return;
         }
-        Entry<K, V> p = x.parent;
+        size--;
+
+        // 如果删除的节点存在左右子节点
+        if (leftOf(x) != null && rightOf(x) != null) {
+            // 找到后继者
+            Entry<K, V> s = successor(x);
+            x.key = s.key;
+            x.val = s.val;
+            x = s;
+        }
+
+        Entry<K, V> p = parentOf(x);
         // 先进行普通二叉树删除
         Entry<K, V> replacement = leftOf(x) != null ? leftOf(x) : rightOf(x);
         if (replacement != null) {
             // 删除的结点有孩子
-            
 
 
-        } else if (parentOf(x) == null) {
+        } else if (p == null) {
             root = null;
         } else {
             // 删除的结点没有孩子
 
         }
 
-
     }
+
+    /**
+     * 找到结点的后继者（就是右相邻的结点）
+     *
+     * @param x   结点
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    static <K, V> AVLTreeST.Entry<K, V> successor(Entry<K, V> x) {
+        if (x == null) {
+            return null;
+        }
+        if (x.right != null) {
+            // 右相邻节点
+            Entry<K, V> e = x.right;
+            while (e.left != null) {
+                e = e.left;
+            }
+            return e;
+        } else {
+            // 注意：向上回溯找到后继者
+            Entry<K, V> p = x.parent;
+            Entry<K, V> ch = x;
+            while (p != null && ch == p.right) {
+                ch = p;
+                p = p.parent;
+            }
+            return p;
+        }
+    }
+
 
     public int getHeight() {
         Entry<K, V> t = root;
