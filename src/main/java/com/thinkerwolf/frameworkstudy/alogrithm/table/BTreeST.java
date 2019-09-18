@@ -15,7 +15,7 @@ import java.util.Collection;
  */
 public class BTreeST<K extends Comparable<K>, V> extends AbstractST<K, V> {
 
-    private static final int DEFAULT_M = 3;
+    private static final int DEFAULT_M = 5;
     /**
      * 树阶数(结点数量)
      */

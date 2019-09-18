@@ -9,19 +9,23 @@ import java.util.LinkedList;
 /**
  * 红黑树（高度平衡的二叉树）实现的符号表
  * <p>
- *     性质：
- *     1.没有结点可以同时和两条红链接相连。
- *     2.红链接均为左链接。
- *     3.任意空链接到根结点路径上黑链接数量相同。
+ * 红黑树的高度平衡是相对的
  * </p>
  * <p>
- *     性质简单版：
- *     1.结点非黑即白。
- *     2.根结点是黑色。
- *     3.叶子结点（空结点）是黑色。
- *     4.红色结点的子结点肯定是黑色。
- *     5.任意结点到叶子结点包含相同的黑色结点。（如果一个结点存在黑子结点，则结点肯定包含相同结点）
+ * 性质：
+ * 1.没有结点可以同时和两条红链接相连。
+ * 2.红链接均为左链接。
+ * 3.任意空链接到根结点路径上黑链接数量相同。
  * </p>
+ * <p>
+ * 性质简单版：
+ * 1.结点非黑即白。
+ * 2.根结点是黑色。
+ * 3.叶子结点（空结点）是黑色。
+ * 4.红色结点的子结点肯定是黑色，父亲肯定是黑色。
+ * 5.任意结点到叶子结点包含相同的黑色结点。（如果一个结点存在黑子结点，则结点肯定包含相同结点）
+ * </p>
+ *
  * @param <K>
  * @param <V>
  * @author wukai
@@ -43,20 +47,53 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
 
     @Override
     public V put(K key, V value) {
-        root = put(root, key, value);
-        root.color = BLACK;
+//        root = put(root, key, value);
+//        root.color = BLACK;
+        Entry<K, V> t = root;
+        if (t == null) {
+            root = new Entry<>(null, key, value);
+            root.setColor(BLACK);
+            return null;
+        }
+        Entry<K, V> p;
+        int cmp;
+        do {
+            cmp = compare(key, t.getKey());
+            if (cmp < 0) {
+                p = t;
+                t = t.left;
+            } else if (cmp > 0) {
+                p = t;
+                t = t.right;
+            } else {
+                V old = t.getValue();
+                t.setValue(value);
+                return old;
+            }
+        } while (t != null);
+        Entry<K, V> e = new Entry<>(p, key, value);
+        if (cmp > 0) {
+            p.right = e;
+        } else {
+            p.left = e;
+        }
+        fixAfterInsertion(e);
         return null;
     }
 
     private Entry<K, V> put(Entry<K, V> h, K key, V val) {
         if (h == null) {
-            return new Entry<>(key, val, RED);
+            return new Entry<>(null, key, val);
         }
         int cmp = compare(key, h.key);
         if (cmp < 0) {
-            h.left = put(h.left, key, val);
+            Entry<K, V> e = put(h.left, key, val);
+            e.parent = h;
+            h.left = e;
         } else if (cmp > 0) {
-            h.right = put(h.right, key, val);
+            Entry<K, V> e = put(h.left, key, val);
+            e.parent = h;
+            h.right = e;
         } else {
             h.setValue(val);
         }
@@ -72,16 +109,6 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         return h;
     }
 
-
-
-
-    private boolean isRed(Entry<K, V> en) {
-        if (en == null) {
-            // 空结点默认为黑
-            return false;
-        }
-        return en.isRed();
-    }
 
     @Override
     public V get(K key) {
@@ -155,6 +182,71 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
 
     // Red-Black operation
 
+    private static <K, V> boolean isRed(Entry<K, V> p) {
+        if (p == null) {
+            return BLACK;
+        }
+        return p.color == RED;
+    }
+
+    private static <K, V> Entry<K, V> leftOf(Entry<K, V> p) {
+        return p == null ? null : p.left;
+    }
+
+    private static <K, V> Entry<K, V> rightOf(Entry<K, V> p) {
+        return p == null ? null : p.right;
+    }
+
+    private static <K, V> Entry<K, V> parentOf(Entry<K, V> p) {
+        return p == null ? null : p.parent;
+    }
+
+    private static <K, V> void setColor(Entry<K, V> p, boolean color) {
+        if (p != null) {
+            p.setColor(color);
+        }
+    }
+
+    private void fixAfterInsertion(Entry<K, V> x) {
+        x.color = RED;
+//        if (!isRed(parentOf(x))) { // 父节点为黑不会引起高度增加
+//            return;
+//        }
+        while (x != null && !isRed(parentOf(x))) {
+            // x当前结点，p为x的父节点，g为x的爷爷结点，y为x的叔叔结点
+            Entry<K, V> p = parentOf(x);
+            Entry<K, V> g = parentOf(parentOf(x));
+            Entry<K, V> y = rightOf(g);
+
+            // left-case1: p为g的左孩子，y为红色，x可左可右。 fix：p、y染黑，g染红，x回溯到g。
+            // left-case2: p为g的左孩子，y为黑色，x为右孩子。 fix：左旋p，x指向p，转化成case3。
+            // left-case3: p为g的左孩子，y为黑色，x为左孩子。 fix：p染黑，g染红，右旋g。
+
+            // right-case1: p为g的右孩子，y为红色，x可左可右。 fix：p、y染黑，g染红，x回溯到g。
+            // right-case2: p为g的右孩子，y为黑色，x为左孩子。 fix：右旋p，x指向p，转化成case3。
+            // right-case3: p为g的右孩子，y为黑色，x为右孩子。 fix：p染黑，g染红，左旋g。
+
+            // Notice：case1引起的rootOver会导致数的黑高增加1，是唯一会增加黑高的情况
+
+
+
+            if (p == leftOf(g)) {
+                y = rightOf(g);
+
+
+            } else {
+                y = leftOf(g);
+
+
+            }
+
+        }
+
+
+        root.color = BLACK;
+    }
+
+
     /**
      * 左旋
      *
@@ -162,9 +254,33 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
      * @return
      */
     private Entry<K, V> rotateLeft(Entry<K, V> h) {
+        if (h == null) {
+            return null;
+        }
+
         Entry<K, V> x = h.right;
+
+        // 调整parent
+        if (x.left != null) {
+            x.left.parent = h;
+        }
+        Entry<K, V> p = parentOf(h);
+        if (p != null) {
+            if (p.left == h) {
+                p.left = x;
+            } else {
+                p.right = x;
+            }
+        } else {
+            root = x;
+        }
+
+        x.parent = p;
+        h.parent = x;
+
         h.right = x.left;
         x.left = h;
+
         x.color = h.color;
         h.color = RED;
         return x;
@@ -177,9 +293,31 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
      * @return
      */
     private Entry<K, V> rotateRight(Entry<K, V> h) {
+        if (h == null) {
+            return null;
+        }
         Entry<K, V> x = h.left;
+        Entry<K, V> p = parentOf(h);
+
+        // 调整parent
+        if (x.right != null) {
+            x.right.parent = h;
+        }
+        if (p != null) {
+            if (p.left == h) {
+                p.left = x;
+            } else {
+                p.right = x;
+            }
+        } else {
+            this.root = x;
+        }
+        x.parent = p;
+        h.parent = x;
+
         h.left = x.right;
         x.right = h;
+
         x.color = h.color;
         h.color = RED;
         return x;
@@ -209,18 +347,14 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         Entry<K, V> parent;
         boolean color = RED;
 
-        public Entry(K key, V val, boolean color) {
+        public Entry(Entry<K, V> parent, K key, V val) {
+            this.parent = parent;
             this.key = key;
             this.val = val;
+        }
+
+        public void setColor(boolean color) {
             this.color = color;
-        }
-
-        public boolean isRed() {
-            return color == RED;
-        }
-
-        public boolean isBlack() {
-            return color == BLACK;
         }
 
         @Override

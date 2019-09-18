@@ -1,10 +1,19 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.table;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.ST;
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
 
 import java.util.*;
 
+/**
+ * 平衡二叉树(AVL)实现的符号表
+ * <p>
+ * 任一结点的左右子节点高度差不超过1
+ * </p>
+ *
+ * @param <K>
+ * @param <V>
+ * @author wukai
+ */
 public class AVLTreeST<K, V> extends AbstractST<K, V> {
 
     private transient Entry<K, V> root;
@@ -147,14 +156,32 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
         // 先进行普通二叉树删除
         Entry<K, V> replacement = leftOf(x) != null ? leftOf(x) : rightOf(x);
         if (replacement != null) {
-            // 删除的结点有孩子
-
-
+            // 删除的结点有孩子 且只有一个孩子
+            if (p != null) {
+                if (p.left == x) {
+                    p.left = replacement;
+                } else {
+                    p.right = replacement;
+                }
+                p.height = Math.max(heightOf(p.left), heightOf(p.right)) + 1;
+            } else {
+                root = replacement;
+            }
+            replacement.parent = p;
+            x.parent = x.left = x.right = null;
+            fixAfterDeletion(replacement);
         } else if (p == null) {
+            // 删除根结点
             root = null;
         } else {
             // 删除的结点没有孩子
-
+            if (p.left == x) {
+                p.left = null;
+            } else {
+                p.right = null;
+            }
+            x.parent = null;
+            fixAfterDeletion(p);
         }
 
     }
@@ -163,8 +190,8 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
      * 找到结点的后继者（就是右相邻的结点）
      *
      * @param x   结点
-     * @param <K>
-     * @param <V>
+     * @param <K> k
+     * @param <V> v
      * @return
      */
     static <K, V> AVLTreeST.Entry<K, V> successor(Entry<K, V> x) {
@@ -199,7 +226,7 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
         return t.height;
     }
 
-    private void assertAVLTree(Entry<K, V> p) {
+    public void assertAVLTree(Entry<K, V> p) {
         // 断言。。。是否符合AVL树性质，左右子树高度差
         if (p == null) {
             return;
@@ -210,28 +237,82 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
         assertAVLTree(p.right);
     }
 
-    private Entry<K, V> leftOf(Entry<K, V> p) {
+    private static <K, V> Entry<K, V> leftOf(Entry<K, V> p) {
         return p == null ? null : p.left;
     }
 
-    private Entry<K, V> rightOf(Entry<K, V> p) {
+    private static <K, V> Entry<K, V> rightOf(Entry<K, V> p) {
         return p == null ? null : p.right;
     }
 
-    private Entry<K, V> parentOf(Entry<K, V> p) {
+    private static <K, V> Entry<K, V> parentOf(Entry<K, V> p) {
         return p == null ? null : p.parent;
     }
 
-    private int heightOf(Entry<K, V> p) {
+    private static <K, V> int heightOf(Entry<K, V> p) {
         return p == null ? 0 : p.height;
+    }
+
+    private static <K, V> void fixHeightOf(Entry<K, V> p) {
+        if (p != null) {
+            p.height = Math.max(heightOf(p.left), heightOf(p.right)) + 1;
+        }
+    }
+
+    /**
+     * 结点的平衡因子（结点左右子树的高度差）
+     */
+    private static <K, V> int balanceFactorOf(Entry<K, V> p) {
+        return p == null ? 0 : heightOf(p.left) - heightOf(p.right);
+    }
+
+    private void fixAfterDeletion(Entry<K, V> x) {
+        while (x != null) {
+
+            // 回溯时修复结点高度
+            fixHeightOf(x);
+
+            int d = balanceFactorOf(x);
+            //if (Math.abs(d) == 1) {
+            // // 整体高度未变化停止回溯
+            // break;
+            //}
+            if (Math.abs(d) == 2) {
+                if (d == 2) {
+                    // 左比右高，左子结点的平衡因子
+                    int bf = balanceFactorOf(x.left);
+                    if (Math.abs(bf) > 1) {
+                        throw new RuntimeException(String.valueOf(bf));
+                    }
+                    if (bf == 1 || bf == 0) {
+                        rotateRight(x);
+                    } else {
+                        rotateLeftThanRight(x);
+                    }
+                } else {
+                    // 右比左高
+                    int bf = balanceFactorOf(x.right);
+                    if (Math.abs(bf) > 1) {
+                        throw new RuntimeException(String.valueOf(bf));
+                    }
+                    if (bf == -1 || bf == 0) {
+                        rotateLeft(x);
+                    } else {
+                        rotateRightThanLeft(x);
+                    }
+                }
+                fixHeightOf(x);
+                //break; // 不能break，需要回溯修复父节点高度
+            }
+            x = x.parent;
+        }
     }
 
     private void fixAfterInsertion(Entry<K, V> x) {
         while (x != null) {
             Entry<K, V> p = x.parent;
-            Entry<K, V> b = leftOf(p) == x ? rightOf(p) : leftOf(p);
             // 查看左右子树的高度差
-            int d = Math.abs(heightOf(x) - heightOf(b));
+            int d = Math.abs(balanceFactorOf(p));
             if (d == 2) { // 高度差2
                 // x左右子树谁的高
                 boolean left = heightOf(x.left) >= heightOf(x.right);
@@ -253,13 +334,13 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
                     }
                 }
                 if (p != null) {
-                    p.height = Math.max(heightOf(p.left), heightOf(p.right)) + 1;
+                    fixHeightOf(p);
                 }
                 break;
             }
 
             if (p != null) {
-                p.height = Math.max(heightOf(p.left), heightOf(p.right)) + 1;
+                fixHeightOf(p);
             }
             x = p;
         }
@@ -321,7 +402,7 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
             if (x.left != null) {
                 x.left.parent = h;
             }
-            // 修正h父节点所有子树
+            // 修正父节点
             if (p != null) {
                 if (leftOf(p) == h) {
                     p.left = x;
@@ -407,40 +488,6 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
                     ", height=" + height +
                     ')';
         }
-    }
-
-    public static void main(String[] args) {
-        AVLTreeST<Integer, String> st = new AVLTreeST<>();
-//        for (int i = 20; i >=1; i--) {
-//            st.put(i, "val" + i);
-//        }
-
-        // fix
-//        int[] keys = new int[]{1, 9, 8};
-//        for (int i = 0; i < keys.length; i++) {
-//            st.put(keys[i], "val" + keys[i]);
-//        }
-
-
-        Random r = new Random();
-        int max = 10000;
-        Set<Integer> keySet = new LinkedHashSet<>();
-        for (int i = 0; i < max; i++) {
-            int key = r.nextInt(max);
-            keySet.add(key);
-            st.put(key, "val" + key);
-        }
-        System.out.println(keySet);
-
-        st.print();
-        System.out.println("Height " + st.getHeight());
-        System.out.println("size " + st.size);
-
-        for (Integer k : keySet) {
-            Util.isTrue(st.get(k) != null, "Bad AVL tree");
-        }
-
-        st.assertAVLTree(st.root);
     }
 
 }
