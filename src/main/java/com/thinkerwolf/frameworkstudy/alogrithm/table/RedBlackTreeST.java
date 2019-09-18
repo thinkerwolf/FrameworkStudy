@@ -1,7 +1,6 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.table;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.ST;
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -419,17 +418,13 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
 
     public static void main(String[] args) {
         RedBlackTreeST<Integer, String> st = new RedBlackTreeST<>();
-        int[] keys = new int[]{20, 10, 30};
-
-        keys = new int[100];
-        for (int i = 0; i < 100; i++) {
-            keys[i] = Util.nextInt(100);
-        }
+        int[] keys = new int[]{
+                12, 1, 9, 2, 0, 11, 7,
+                19, 4, 15, 18, 5,
+                14, 13, 10, 16, 6, 3, 8, 17
+        };
 
         for (int i = 0; i < keys.length; i++) {
-            if (i == 2) {
-                i = 2;
-            }
             st.put(keys[i], "val" + keys[i]);
         }
         System.out.println(st);
