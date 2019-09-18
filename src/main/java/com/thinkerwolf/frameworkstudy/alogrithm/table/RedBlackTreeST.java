@@ -1,6 +1,7 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.table;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.ST;
+import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -42,6 +43,8 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         this.comparator = comparator;
     }
 
+    private transient int size = 0;
+
     public RedBlackTreeST() {
     }
 
@@ -52,7 +55,8 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         Entry<K, V> t = root;
         if (t == null) {
             root = new Entry<>(null, key, value);
-            root.setColor(BLACK);
+            setColor(root, BLACK);
+            size++;
             return null;
         }
         Entry<K, V> p;
@@ -77,6 +81,7 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         } else {
             p.left = e;
         }
+        size++;
         fixAfterInsertion(e);
         return null;
     }
@@ -112,6 +117,17 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
 
     @Override
     public V get(K key) {
+        Entry<K, V> t = root;
+        while (t != null) {
+            int cmp = compare(key, t.getKey());
+            if (cmp == 0) {
+                return t.getValue();
+            } else if (cmp > 0) {
+                t = t.right;
+            } else {
+                t = t.left;
+            }
+        }
         return null;
     }
 
@@ -122,7 +138,7 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -140,6 +156,11 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         return false;
     }
 
+    /**
+     * @param k1 比较的键1
+     * @param k2 比较的键2
+     * @return
+     */
     private int compare(K k1, K k2) {
         if (comparator != null) {
             return comparator.compare(k1, k2);
@@ -209,39 +230,62 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
 
     private void fixAfterInsertion(Entry<K, V> x) {
         x.color = RED;
-//        if (!isRed(parentOf(x))) { // 父节点为黑不会引起高度增加
-//            return;
-//        }
-        while (x != null && !isRed(parentOf(x))) {
+
+        while (x != null && !isRed(parentOf(x)) && x != root) {
             // x当前结点，p为x的父节点，g为x的爷爷结点，y为x的叔叔结点
             Entry<K, V> p = parentOf(x);
             Entry<K, V> g = parentOf(parentOf(x));
             Entry<K, V> y = rightOf(g);
 
-            // left-case1: p为g的左孩子，y为红色，x可左可右。 fix：p、y染黑，g染红，x回溯到g。
-            // left-case2: p为g的左孩子，y为黑色，x为右孩子。 fix：左旋p，x指向p，转化成case3。
-            // left-case3: p为g的左孩子，y为黑色，x为左孩子。 fix：p染黑，g染红，右旋g。
+            // left-case1: (p为g的左孩子)，y为红色，x可左可右。 fix：p、y染黑，g染红，x回溯到g。
+            // left-case2: (p为g的左孩子)，y为黑色，x为右孩子。 fix：左旋p，x指向p，转到case3。
+            // left-case3: (p为g的左孩子)，y为黑色，x为左孩子。 fix：p染黑，g染红，右旋g。
 
-            // right-case1: p为g的右孩子，y为红色，x可左可右。 fix：p、y染黑，g染红，x回溯到g。
-            // right-case2: p为g的右孩子，y为黑色，x为左孩子。 fix：右旋p，x指向p，转化成case3。
-            // right-case3: p为g的右孩子，y为黑色，x为右孩子。 fix：p染黑，g染红，左旋g。
+            // right-case1: (p为g的右孩子)，y为红色，x可左可右。 fix：p、y染黑，g染红，x回溯到g。
+            // right-case2: (p为g的右孩子)，y为黑色，x为左孩子。 fix：右旋p，x指向p，转到case3。
+            // right-case3: (p为g的右孩子)，y为黑色，x为右孩子。 fix：p染黑，g染红，左旋g。
 
             // Notice：case1引起的rootOver会导致数的黑高增加1，是唯一会增加黑高的情况
-
-
-
             if (p == leftOf(g)) {
-                y = rightOf(g);
-
-
+                if (isRed(y)) {
+                    // left-case1
+                    setColor(p, BLACK);
+                    setColor(y, BLACK);
+                    setColor(g, RED);
+                    x = g;
+                } else {
+                    if (x == rightOf(p)) {
+                        // left-case2
+                        x = p;
+                        rotateLeft(p);
+                        // to case3
+                    }
+                    // left-case3
+                    setColor(p, BLACK);
+                    setColor(g, RED);
+                    rotateRight(g);
+                }
             } else {
-                y = leftOf(g);
-
-
+                if (isRed(y)) {
+                    // right-case1
+                    setColor(p, BLACK);
+                    setColor(y, BLACK);
+                    setColor(g, RED);
+                    x = g;
+                } else {
+                    if (x == leftOf(p)) {
+                        // right-case2
+                        x = p;
+                        rotateRight(p);
+                        // to case3
+                    }
+                    // right-case3
+                    setColor(p, BLACK);
+                    setColor(g, RED);
+                    rotateLeft(g);
+                }
             }
-
         }
-
 
         root.color = BLACK;
     }
@@ -376,6 +420,11 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
     public static void main(String[] args) {
         RedBlackTreeST<Integer, String> st = new RedBlackTreeST<>();
         int[] keys = new int[]{20, 10, 30};
+
+        keys = new int[100];
+        for (int i = 0; i < 100; i++) {
+            keys[i] = Util.nextInt(100);
+        }
 
         for (int i = 0; i < keys.length; i++) {
             if (i == 2) {
