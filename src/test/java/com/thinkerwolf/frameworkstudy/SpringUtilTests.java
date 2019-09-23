@@ -14,5 +14,8 @@ public class SpringUtilTests {
         System.out.println(0+ 'z');
         System.out.println(0 + 'A');
         System.out.println(0 + 'Z');
+
+        System.out.println(14 ^ 13);
+
     }
 }

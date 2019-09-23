@@ -430,20 +430,30 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
 
     public void print() {
         StringBuilder builder = new StringBuilder();
-        print(builder, root, 1);
-        System.out.println(builder.toString());
-    }
 
-    private void print(StringBuilder builder, Entry<K, V> en, int level) {
-        if (en == null) {
-            return;
+        LinkedList<Entry<K, V>> dequeue = new LinkedList<>();
+        if (root != null) {
+            dequeue.add(root);
         }
-        builder.append("L" + level).append(en.toString()).append(' ');
-        builder.append("\n");
-        StringBuilder childBuilder = new StringBuilder();
-        print(childBuilder, en.left, level + 1);
-        print(childBuilder, en.right, level + 1);
-        builder.append(childBuilder);
+
+        int level = 1;
+        while (!dequeue.isEmpty()) {
+            builder.append("L").append(level).append(' ');
+            int size = dequeue.size();
+            for (int i = 0; i < size; i++) {
+                Entry<K, V> en = dequeue.pollFirst();
+                builder.append(en).append(' ');
+                if (en.left != null) {
+                    dequeue.addLast(en.left);
+                }
+                if (en.right != null) {
+                    dequeue.addLast(en.right);
+                }
+            }
+            builder.append("\n");
+            level++;
+        }
+        System.out.println(builder.toString());
     }
 
     static class Entry<K, V> implements ST.Entry<K, V> {
@@ -482,9 +492,8 @@ public class AVLTreeST<K, V> extends AbstractST<K, V> {
 
         @Override
         public String toString() {
-            return "Entry(" +
+            return "(" +
                     "key=" + key +
-                    ", val=" + val +
                     ", height=" + height +
                     ')';
         }
