@@ -204,7 +204,7 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
 
     private static <K, V> boolean isRed(Entry<K, V> p) {
         if (p == null) {
-            return BLACK;
+            return false;
         }
         return p.color == RED;
     }
@@ -230,11 +230,10 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
     private void fixAfterInsertion(Entry<K, V> x) {
         x.color = RED;
 
-        while (x != null && !isRed(parentOf(x)) && x != root) {
+        while (x != null && x != root && isRed(parentOf(x))) {
             // x当前结点，p为x的父节点，g为x的爷爷结点，y为x的叔叔结点
             Entry<K, V> p = parentOf(x);
             Entry<K, V> g = parentOf(parentOf(x));
-            Entry<K, V> y = rightOf(g);
 
             // left-case1: (p为g的左孩子)，y为红色，x可左可右。 fix：p、y染黑，g染红，x回溯到g。
             // left-case2: (p为g的左孩子)，y为黑色，x为右孩子。 fix：左旋p，x指向p，转到case3。
@@ -246,6 +245,7 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
 
             // Notice：case1引起的rootOver会导致数的黑高增加1，是唯一会增加黑高的情况
             if (p == leftOf(g)) {
+                Entry<K, V> y = rightOf(g);
                 if (isRed(y)) {
                     // left-case1
                     setColor(p, BLACK);
@@ -255,16 +255,18 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
                 } else {
                     if (x == rightOf(p)) {
                         // left-case2
-                        x = p;
+                        // x = p;
+                        x = parentOf(x);
                         rotateLeft(p);
                         // to case3
                     }
-                    // left-case3
-                    setColor(p, BLACK);
-                    setColor(g, RED);
-                    rotateRight(g);
+                    // left-case3  可能从case2来的，需要重新找p、g
+                    setColor(parentOf(x), BLACK);
+                    setColor(parentOf(parentOf(x)), RED);
+                    rotateRight(parentOf(parentOf(x)));
                 }
             } else {
+                Entry<K, V> y = leftOf(g);
                 if (isRed(y)) {
                     // right-case1
                     setColor(p, BLACK);
@@ -274,14 +276,15 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
                 } else {
                     if (x == leftOf(p)) {
                         // right-case2
-                        x = p;
+                        // x = p;
+                        x = parentOf(x);
                         rotateRight(p);
                         // to case3
                     }
                     // right-case3
-                    setColor(p, BLACK);
-                    setColor(g, RED);
-                    rotateLeft(g);
+                    setColor(parentOf(x), BLACK);
+                    setColor(parentOf(parentOf(x)), RED);
+                    rotateLeft(parentOf(parentOf(x)));
                 }
             }
         }
@@ -324,8 +327,8 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         h.right = x.left;
         x.left = h;
 
-        x.color = h.color;
-        h.color = RED;
+//        x.color = h.color;
+//        h.color = RED;
         return x;
     }
 
@@ -361,8 +364,9 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         h.left = x.right;
         x.right = h;
 
-        x.color = h.color;
-        h.color = RED;
+//        x.color = h.color;
+//        h.color = RED;
+
         return x;
     }
 
@@ -375,9 +379,37 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         h.color = RED;
         h.left.color = BLACK;
         h.right.color = BLACK;
-
     }
 
+    /**
+     * 按层遍历树
+     */
+    public void print() {
+        // 打印
+        Entry<K, V> t = root;
+        if (t == null) {
+            return;
+        }
+        LinkedList<Entry<K, V>> dqueue = new LinkedList<>();
+        dqueue.add(t);
+        StringBuilder builder = new StringBuilder();
+        while (!dqueue.isEmpty()) {
+            // 同一层放到一个queue
+            // 先将这层全部打印，然后将下一层作为parent
+            for (int i = 0, max = dqueue.size(); i < max; i++) {
+                Entry<K, V> e = dqueue.removeFirst();
+                builder.append(e.toString()).append(' ');
+                if (e.left != null) {
+                    dqueue.addLast(e.left);
+                }
+                if (e.right != null) {
+                    dqueue.addLast(e.right);
+                }
+            }
+            builder.append("\n");
+        }
+        System.out.println(builder);
+    }
 
     private static final boolean RED = false;
     private static final boolean BLACK = true;
@@ -414,6 +446,16 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         public void setValue(V v) {
             this.val = v;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(color == RED ? "R" : "B");
+            builder.append('(');
+            builder.append(key);
+            builder.append(')');
+            return builder.toString();
+        }
     }
 
     public static void main(String[] args) {
@@ -427,7 +469,7 @@ public class RedBlackTreeST<K, V> extends AbstractST<K, V> {
         for (int i = 0; i < keys.length; i++) {
             st.put(keys[i], "val" + keys[i]);
         }
-        System.out.println(st);
+        st.print();
     }
 
 }
