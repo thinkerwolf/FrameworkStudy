@@ -1,32 +1,48 @@
 package com.thinkerwolf.frameworkstudy;
 
-import org.apache.catalina.core.StandardThreadExecutor;
+import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.redis.LogLevel;
+import com.thinkerwolf.frameworkstudy.redis.RedisAutoCompletion;
+import com.thinkerwolf.frameworkstudy.redis.RedisLogger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
-import redis.clients.jedis.Transaction;
+import redis.clients.jedis.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RedisTests {
 
     private static Jedis conn;
+    static JedisPool jedisPool;
 
-    public RedisTests() {
 
+    @BeforeClass
+    public static void beforeStart() {
+        jedisPool = new JedisPool();
+        conn = jedisPool.getResource();
+        conn.select(15);
+    }
+
+    @AfterClass
+    public static void afterOver() {
+//        conn.save();
+        conn.close();
     }
 
     @Test
     public void testString() {
-        conn.set("num", "0");
+        System.out.println(conn.set("num", "0"));
         conn.incrBy("num", 300L);
         conn.decr("num");
         conn.decrBy("num", 100);
@@ -176,21 +192,94 @@ public class RedisTests {
 
     @Test
     public void testTransaction() {
-        Transaction transaction = conn.multi();
-        transaction.hset("trans", "name", "Json");
-        transaction.exec();
+
+        // 准备
+        String inventory = "inventory:";
+        String market = "market:";
+        String itemId = "0001";
+        conn.sadd(inventory, itemId);
+
+        Pipeline pipe = conn.pipelined();
+        pipe.multi();
+        pipe.srem(inventory, itemId);
+        pipe.zadd(market, 30.7, itemId);
+
+        Response<List<Object>> resp = pipe.exec();
+        pipe.close();
+        System.out.println(resp.get());
+
+        boolean ok;
+        do { // CAS
+            conn.watch("mykey");
+            String val = conn.get("mykey");
+            val = val == null ? String.valueOf(1) : String.valueOf(Integer.parseInt(val) + 1);
+
+            Transaction transaction = conn.multi();
+            transaction.set("mykey", val);
+            List<Object> res = transaction.exec();
+            System.out.println(res);
+            ok = "OK".equals(String.valueOf(res.get(0)));
+        } while (!ok);
+
     }
 
-    @BeforeClass
-    public static void beforeStart() {
-        conn = new Jedis("localhost");
-        conn.select(15);
+    @Test
+    public void testLogResent() {
+        RedisLogger logger = new RedisLogger("com.thinkerwolf.redis", conn);
+        for (int i = 0; i < 100; i++) {
+            logger.logResent(LogLevel.INFO, "Test redis log {}, {}", i, i);
+        }
     }
 
-    @AfterClass
-    public static void afterOver() {
-        conn.save();
-        conn.close();
+    @Test
+    public void testLogCommon() {
+        RedisLogger logger = new RedisLogger("com.thinkerwolf.redis", conn);
+        for (int i = 0; i < 10; i++) {
+            logger.logCommon(LogLevel.INFO, "Test redis log {}, {}", i, i);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+    @Test
+    public void textCompletion() {
+        String[] prefixes = new String[]{"吴", "周", "王", "M"};
+        String user = "wukai";
+        for (String prefix : prefixes) {
+            int num = Util.nextInt(5, 10);
+            for (int i = 0; i < num; i++) {
+                String contract = prefix + Util.nextString(4);
+                RedisAutoCompletion.addAndUpdateResent(conn, user, contract);
+            }
+        }
+
+        for (String prefix : prefixes) {
+            System.out.println(RedisAutoCompletion.fetchResentCompletionList(conn, user, prefix));
+        }
+
+        System.out.println("========================");
+
+        prefixes = new String[100];
+        for (int i = 0; i < prefixes.length; i++) {
+            prefixes[i] = Util.nextString(3);
+        }
+
+        for (String prefix : prefixes) {
+            for (int i = 0; i < 1000; i++) {
+                RedisAutoCompletion.addAndUpdateMembers(conn, "kfc", prefix + Util.nextString(4));
+            }
+        }
+        System.out.println("prefix " + prefixes[0]);
+        System.out.println(RedisAutoCompletion.autoCompletionOnPrefix(conn, "kfc", prefixes[0]));
+    }
+
+    @Test
+    public void testRangeCompletion() {
+        System.out.println(Arrays.toString(RedisAutoCompletion.findPrefixRange("aba")));
+    }
+
 
 }
