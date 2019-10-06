@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.*;
+import static com.thinkerwolf.frameworkstudy.common.Util.*;
 
 /**
  * 插入排序算法

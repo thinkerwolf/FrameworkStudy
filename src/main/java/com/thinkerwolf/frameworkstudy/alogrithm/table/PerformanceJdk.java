@@ -1,6 +1,6 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.table;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.common.Util;
 import org.apache.commons.lang.time.StopWatch;
 
 import java.util.*;

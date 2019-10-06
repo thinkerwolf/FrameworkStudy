@@ -1,6 +1,6 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.ex2;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.common.Util;
 
 import java.util.Comparator;
 

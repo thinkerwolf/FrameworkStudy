@@ -3,8 +3,8 @@ package com.thinkerwolf.frameworkstudy.alogrithm.sort;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
-import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.less;
-import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.show;
+import static com.thinkerwolf.frameworkstudy.common.Util.less;
+import static com.thinkerwolf.frameworkstudy.common.Util.show;
 
 public class MergeBU {
     static Comparable[] aux;

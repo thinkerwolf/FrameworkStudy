@@ -7,11 +7,15 @@ package com.thinkerwolf.frameworkstudy.redis;
  */
 public class RedisUtil {
 
-    public static final String SUCCESS_CODE = "OK";
+    public static final String SUCCESS_STRING = "OK";
 
+    public static final Long SUCCESS_LONG = 1L;
 
-    public static boolean isOk(String code) {
-        return SUCCESS_CODE.equals(code);
+    public static boolean isStringOk(Object code) {
+        return SUCCESS_STRING.equals(code);
     }
 
+    public static boolean isLongOk(Object code) {
+        return SUCCESS_LONG.equals(code);
+    }
 }

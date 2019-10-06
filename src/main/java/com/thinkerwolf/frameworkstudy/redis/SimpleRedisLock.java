@@ -1,14 +1,16 @@
 package com.thinkerwolf.frameworkstudy.redis;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.common.Util;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
+import redis.clients.jedis.params.SetParams;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 简单Redis锁实现
+ * 简单Redis锁实现，
  *
  * @author wukai
  */
@@ -16,7 +18,7 @@ public class SimpleRedisLock {
 
 
     /**
-     * 尝试获取锁，参考Future写法
+     * 尝试获取锁，setnx和expire一起操作不是原子性的。
      *
      * @param conn    连接
      * @param name    lockName
@@ -32,8 +34,10 @@ public class SimpleRedisLock {
         boolean interrupted = false;
         try {
             for (; ; ) {
+                // 非原子性操作，可能误expire
                 ok = conn.setnx(lock, identifier) > 0;
                 if (ok) {
+                    conn.expire(lock, 5);
                     break;
                 }
                 try {
@@ -41,10 +45,6 @@ public class SimpleRedisLock {
                 } catch (InterruptedException e) {
                     // 默认不可以被打断
                     interrupted = true;
-                }
-                ok = conn.setnx(lock, identifier) > 0;
-                if (ok) {
-                    break;
                 }
                 waitNanos = waitNanos - (System.nanoTime() - startNanos);
                 if (waitNanos <= 0) {
@@ -59,8 +59,12 @@ public class SimpleRedisLock {
         return ok ? identifier : null;
     }
 
+    public static String tryAcquire(Jedis conn, String name) {
+        return tryAcquire(conn, name, 0);
+    }
+
     /**
-     * 尝试释放锁
+     * 尝试释放锁，使用watch和事务机制，效率比较低
      *
      * @param conn
      * @param name
@@ -85,6 +89,47 @@ public class SimpleRedisLock {
                 return true;
             }
             break;
+        }
+        return false;
+    }
+
+    /**
+     * 高效的获取锁方式
+     *
+     * @param conn
+     * @param name
+     * @return
+     */
+    public static String tryAcquireEfficient(Jedis conn, String name) {
+        String lock = "lock:" + name;
+        String identifier = Util.nextString(10);
+        SetParams params = new SetParams();
+        params.nx();
+        params.ex(5);
+        // Atomic
+        String result = conn.set(lock, identifier, params);
+        System.out.println(result);
+        return RedisUtil.isStringOk(result) ? identifier : null;
+    }
+
+    private static final String RELEASE_SCRIPT =
+            "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+
+    /**
+     * 利用lua脚本执行释放锁操作
+     *
+     * @param conn
+     * @param name
+     * @param identifier
+     * @return
+     */
+    public static boolean tryReleaseEfficient(Jedis conn, String name, String identifier) {
+        String lock = "lock:" + name;
+        // Atomic
+        Object result = conn.eval(RELEASE_SCRIPT, Collections.singletonList(lock), Collections.singletonList(identifier));
+        System.out.println(result);
+        if (RedisUtil.isLongOk(result)) {
+            return true;
         }
         return false;
     }

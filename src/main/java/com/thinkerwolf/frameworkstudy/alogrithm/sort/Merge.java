@@ -1,10 +1,10 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.sort;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.common.Util;
 import edu.princeton.cs.algs4.StdRandom;
 
-import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.less;
-import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.show;
+import static com.thinkerwolf.frameworkstudy.common.Util.less;
+import static com.thinkerwolf.frameworkstudy.common.Util.show;
 
 /**
  * 归并排序

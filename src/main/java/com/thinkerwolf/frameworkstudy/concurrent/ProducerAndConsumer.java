@@ -1,6 +1,6 @@
 package com.thinkerwolf.frameworkstudy.concurrent;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.common.Util;
 
 import java.util.LinkedList;
 import java.util.List;

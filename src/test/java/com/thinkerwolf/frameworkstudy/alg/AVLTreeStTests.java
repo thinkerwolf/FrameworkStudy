@@ -1,7 +1,7 @@
 package com.thinkerwolf.frameworkstudy.alg;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.table.AVLTreeST;
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.common.Util;
 import org.junit.Test;
 
 import java.util.*;

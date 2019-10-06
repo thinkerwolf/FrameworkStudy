@@ -1,9 +1,12 @@
 package com.thinkerwolf.frameworkstudy;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.common.OpResult;
+import com.thinkerwolf.frameworkstudy.common.Util;
 import com.thinkerwolf.frameworkstudy.redis.LogLevel;
 import com.thinkerwolf.frameworkstudy.redis.RedisAutoCompletion;
 import com.thinkerwolf.frameworkstudy.redis.RedisLogger;
+import com.thinkerwolf.frameworkstudy.redis.SimpleTradeSystem;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -15,21 +18,22 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RedisTests {
 
     private static Jedis conn;
-    static JedisPool jedisPool;
+    private static JedisPool jedisPool;
 
 
     @BeforeClass
     public static void beforeStart() {
-        jedisPool = new JedisPool();
+        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+        poolConfig.setMaxIdle(10);
+        poolConfig.setMaxTotal(10);
+        poolConfig.setMinIdle(0);
+        jedisPool = new JedisPool(poolConfig);
         conn = jedisPool.getResource();
         conn.select(15);
     }
@@ -38,6 +42,7 @@ public class RedisTests {
     public static void afterOver() {
 //        conn.save();
         conn.close();
+        jedisPool.destroy();
     }
 
     @Test
@@ -116,7 +121,6 @@ public class RedisTests {
         conn.hset("user2", "name", "JoJo");
         conn.hset("user2", "age", "30");
         conn.hset("user2", "lv", "4");
-
         Map<String, String> map = new HashMap<>();
         map.put("name", "Jose");
         map.put("age", "90");
@@ -279,6 +283,39 @@ public class RedisTests {
     @Test
     public void testRangeCompletion() {
         System.out.println(Arrays.toString(RedisAutoCompletion.findPrefixRange("aba")));
+    }
+
+
+    @Test
+    public void testLock() {
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 6; i++) {
+            final Jedis conn = jedisPool.getResource();
+            final int num = i;
+
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    // 多个线程，多个conn
+                    OpResult op = SimpleTradeSystem.createUser(conn, 2, "Frank", 50);
+                    System.out.println("添加用户 -> " + op);
+                    try {
+                        Thread.sleep(Util.nextInt(50, 10 * 7));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    op = SimpleTradeSystem.uploadToInventory(conn, 2, "item-" + Util.nextString(6));
+                    System.out.println("添加商品 -> " + op);
+                    conn.close();
+                }
+            });
+        }
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 

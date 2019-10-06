@@ -1,9 +1,9 @@
 package com.thinkerwolf.frameworkstudy.alogrithm.sort;
 
-import com.thinkerwolf.frameworkstudy.alogrithm.util.Util;
+import com.thinkerwolf.frameworkstudy.common.Util;
 import edu.princeton.cs.algs4.StdOut;
 
-import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.*;
+import static com.thinkerwolf.frameworkstudy.common.Util.*;
 
 /**
  * 希尔排序

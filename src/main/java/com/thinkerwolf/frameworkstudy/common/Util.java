@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.alogrithm.util;
+package com.thinkerwolf.frameworkstudy.common;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;

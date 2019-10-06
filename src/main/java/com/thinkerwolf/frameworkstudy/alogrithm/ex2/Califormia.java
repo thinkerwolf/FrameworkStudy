@@ -4,8 +4,8 @@ import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Comparator;
 
-import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.exch;
-import static com.thinkerwolf.frameworkstudy.alogrithm.util.Util.show;
+import static com.thinkerwolf.frameworkstudy.common.Util.exch;
+import static com.thinkerwolf.frameworkstudy.common.Util.show;
 
 /**
  * 将字符串按照给定的首字母排序
