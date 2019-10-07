@@ -21,12 +21,12 @@
 	<!-- 协议     -->
 	<dubbo:protocol id="dubbo" port="20880" />
 	
-	<bean id="dubboHelloService" class="com.example.demo.service.HelloServiceImpl" >
+	<bean id="dubboHelloService" class="com.thinkerwolf.frameworkstudy.service.HelloServiceImpl" >
 		<constructor-arg value="Hello"/>
 		<constructor-arg value="@@@!!"/>
 	</bean>
 	
-	<dubbo:service interface="com.example.demo.service.HelloService" ref="dubboHelloService" />  
+	<dubbo:service interface="com.thinkerwolf.frameworkstudy.service.HelloService" ref="dubboHelloService" />
 	
 	
 </beans>

@@ -2,10 +2,7 @@ package com.thinkerwolf.frameworkstudy;
 
 import com.thinkerwolf.frameworkstudy.common.OpResult;
 import com.thinkerwolf.frameworkstudy.common.Util;
-import com.thinkerwolf.frameworkstudy.redis.LogLevel;
-import com.thinkerwolf.frameworkstudy.redis.RedisAutoCompletion;
-import com.thinkerwolf.frameworkstudy.redis.RedisLogger;
-import com.thinkerwolf.frameworkstudy.redis.SimpleTradeSystem;
+import com.thinkerwolf.frameworkstudy.redis.*;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -289,15 +286,14 @@ public class RedisTests {
     @Test
     public void testLock() {
         ExecutorService executor = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 6; i++) {
-            final Jedis conn = jedisPool.getResource();
-            final int num = i;
-
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
+        final int taskNum = 6;
+        final CountDownLatch countDown = new CountDownLatch(taskNum);
+        for (int i = 0; i < taskNum; i++) {
+            final Jedis jedis = jedisPool.getResource();
+            executor.execute(() -> {
+                try {
                     // 多个线程，多个conn
-                    OpResult op = SimpleTradeSystem.createUser(conn, 2, "Frank", 50);
+                    OpResult op = SimpleTradeSystem.createUser(jedis, 2, "Frank", 50);
                     System.out.println("添加用户 -> " + op);
                     try {
                         Thread.sleep(Util.nextInt(50, 10 * 7));
@@ -305,17 +301,63 @@ public class RedisTests {
                         e.printStackTrace();
                     }
 
-                    op = SimpleTradeSystem.uploadToInventory(conn, 2, "item-" + Util.nextString(6));
+                    op = SimpleTradeSystem.uploadToInventory(jedis, 2, "item-" + Util.nextString(6));
                     System.out.println("添加商品 -> " + op);
-                    conn.close();
+                } finally {
+                    jedis.close();
+                    countDown.countDown();
                 }
             });
         }
         try {
-            Thread.sleep(5000);
+            countDown.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        executor.shutdown();
+    }
+
+    @Test
+    public void testSemaphore() {
+        ExecutorService executor = Executors.newFixedThreadPool(22);
+        // 20个任务 10把锁
+        final int taskNum = 20;
+        final CountDownLatch countDown = new CountDownLatch(taskNum);
+        for (int i = 0; i < taskNum; i++) {
+            executor.execute(() -> {
+                Jedis jedis = jedisPool.getResource();
+                String identifier = null;
+                try {
+                    identifier = SimpleRedisLock.tryAcquireSemaphore(jedis, "test", 5, 1000);
+                    if (identifier == null) {
+                        System.out.println("获得信号量失败");
+                        return;
+                    }
+                    System.out.println("获得信号量成功");
+                    System.out.println("operation ======");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                } finally {
+                    if (identifier != null) {
+                        SimpleRedisLock.tryReleaseSemaphore(jedis, "test", identifier);
+                    }
+                    jedis.close();
+                    countDown.countDown();
+                }
+            });
+        }
+
+
+        try {
+            countDown.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        executor.shutdown();
     }
 
 
