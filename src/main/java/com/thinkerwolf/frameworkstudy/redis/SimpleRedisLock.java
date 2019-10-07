@@ -7,7 +7,6 @@ import redis.clients.jedis.params.SetParams;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,6 +15,8 @@ import java.util.concurrent.TimeUnit;
  * @author wukai
  */
 public class SimpleRedisLock {
+
+
 
 
     /**
@@ -109,7 +110,7 @@ public class SimpleRedisLock {
         params.ex(5);
         // Atomic
         String result = conn.set(lock, identifier, params);
-        return RedisUtil.isStringOk(result) ? identifier : null;
+        return JedisUtil.isStringOk(result) ? identifier : null;
     }
 
     private static final String RELEASE_SCRIPT =
@@ -127,45 +128,9 @@ public class SimpleRedisLock {
         String lock = "lock:" + name;
         // Atomic
         Object result = conn.eval(RELEASE_SCRIPT, Collections.singletonList(lock), Collections.singletonList(identifier));
-        if (RedisUtil.isLongOk(result)) {
+        if (JedisUtil.isLongOk(result)) {
             return true;
         }
         return false;
     }
-
-    /**
-     * 尝试获取信号量锁，每个客户端的时钟需要保持一致才能保持公平性。
-     *
-     * @param conn
-     * @param limit
-     * @return
-     */
-    public static String tryAcquireSemaphore(Jedis conn, String name, int limit, long timeout) {
-        String identifier = UUID.randomUUID().toString();
-        //
-        long now = System.currentTimeMillis();
-        String sename = "semaphore:" + name;
-        Transaction trans = conn.multi();
-        // 1.清理过期
-        trans.zremrangeByScore(sename, 0, now - timeout);
-        // 2.添加新数据
-        trans.zadd(sename, now, identifier);
-        // 3.新建rank
-        trans.zrank(sename, identifier);
-        List<Object> objs = trans.exec();
-        System.out.println(objs);
-        Object obj = objs.get(objs.size() - 1);
-        if (obj instanceof Long && ((Long) obj).longValue() < limit) {
-            return identifier;
-        }
-        return null;
-    }
-
-    public static boolean tryReleaseSemaphore(Jedis conn, String name, String identifier) {
-        String sename = "semaphore:" + name;
-        Long l = conn.zrem(sename, identifier);
-        return RedisUtil.isLongOk(l);
-    }
-
-
 }

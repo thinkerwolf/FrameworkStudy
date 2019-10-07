@@ -1,11 +1,13 @@
 package com.thinkerwolf.frameworkstudy.redis;
 
+import java.util.List;
+
 /**
  * Redis工具类
  *
  * @author wukai
  */
-public class RedisUtil {
+public class JedisUtil {
 
     public static final String SUCCESS_STRING = "OK";
 
@@ -18,4 +20,12 @@ public class RedisUtil {
     public static boolean isLongOk(Object code) {
         return SUCCESS_LONG.equals(code);
     }
+
+    public static Object getLast(List<Object> objs) {
+        if (objs == null || objs.size() <= 0) {
+            return null;
+        }
+        return objs.get(objs.size() - 1);
+    }
+
 }

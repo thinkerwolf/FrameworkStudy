@@ -328,7 +328,7 @@ public class RedisTests {
                 Jedis jedis = jedisPool.getResource();
                 String identifier = null;
                 try {
-                    identifier = SimpleRedisLock.tryAcquireSemaphore(jedis, "test", 5, 1000);
+                    identifier = SimpleRedisSemaphore.tryAcquireFair(jedis, "test", 5, 1000);
                     if (identifier == null) {
                         System.out.println("获得信号量失败");
                         return;
@@ -343,7 +343,8 @@ public class RedisTests {
 
                 } finally {
                     if (identifier != null) {
-                        SimpleRedisLock.tryReleaseSemaphore(jedis, "test", identifier);
+                        boolean rs = SimpleRedisSemaphore.tryReleaseFair(jedis, "test", identifier);
+                        System.out.println(rs ? "释放信号量成功" : "超时释放");
                     }
                     jedis.close();
                     countDown.countDown();
