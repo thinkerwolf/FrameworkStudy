@@ -12,7 +12,7 @@ import java.util.UUID;
  *
  * @author wukai
  */
-public class SimpleRedisSemaphore {
+public class RedisSemaphoreUtil {
     /**
      * 尝试获取信号量锁(非公平)
      * 因为客户端系统时钟不同会导致锁获取不公平

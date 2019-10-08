@@ -186,9 +186,18 @@ public class RedisTests {
         });
     }
 
+    @Test
     public void testSubscribe() {
-        List<String> channel = conn.pubsubChannels("channel");
+        conn.subscribe(new JedisPubSub() {
+            @Override
+            public void onMessage(String channel, String message) {
+                System.out.println(message);
+                this.unsubscribe();
+            }
+        },"channel");
 
+
+        System.out.println("3213213");
     }
 
     @Test
@@ -288,21 +297,23 @@ public class RedisTests {
         ExecutorService executor = Executors.newFixedThreadPool(10);
         final int taskNum = 6;
         final CountDownLatch countDown = new CountDownLatch(taskNum);
+        final long startTime = System.currentTimeMillis();
         for (int i = 0; i < taskNum; i++) {
             final Jedis jedis = jedisPool.getResource();
             executor.execute(() -> {
                 try {
                     // 多个线程，多个conn
                     OpResult op = SimpleTradeSystem.createUser(jedis, 2, "Frank", 50);
+                    System.out.println("delay time:" + (System.currentTimeMillis() - startTime));
                     System.out.println("添加用户 -> " + op);
-                    try {
-                        Thread.sleep(Util.nextInt(50, 10 * 7));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    op = SimpleTradeSystem.uploadToInventory(jedis, 2, "item-" + Util.nextString(6));
-                    System.out.println("添加商品 -> " + op);
+//                    try {
+//                        Thread.sleep(Util.nextInt(50, 10 * 7));
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    op = SimpleTradeSystem.uploadToInventory(jedis, 2, "item-" + Util.nextString(6));
+//                    System.out.println("添加商品 -> " + op);
                 } finally {
                     jedis.close();
                     countDown.countDown();
@@ -328,7 +339,7 @@ public class RedisTests {
                 Jedis jedis = jedisPool.getResource();
                 String identifier = null;
                 try {
-                    identifier = SimpleRedisSemaphore.tryAcquireFair(jedis, "test", 5, 1000);
+                    identifier = RedisSemaphoreUtil.tryAcquireFair(jedis, "test", 5, 1000);
                     if (identifier == null) {
                         System.out.println("获得信号量失败");
                         return;
@@ -343,7 +354,7 @@ public class RedisTests {
 
                 } finally {
                     if (identifier != null) {
-                        boolean rs = SimpleRedisSemaphore.tryReleaseFair(jedis, "test", identifier);
+                        boolean rs = RedisSemaphoreUtil.tryReleaseFair(jedis, "test", identifier);
                         System.out.println(rs ? "释放信号量成功" : "超时释放");
                     }
                     jedis.close();

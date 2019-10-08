@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author wukai
  */
-public class SimpleRedisLock {
+public class RedisLockUtil {
 
 
 

@@ -35,20 +35,27 @@ public class SimpleTradeSystem {
         map.put("name", username);
         map.put("funds", String.valueOf(funds));
 
+        RedisLock lock = new RedisLock(conn, "redislock:" + userKey);
+        lock.lock();
         // 乐观锁
-        String identifier = SimpleRedisLock.tryAcquireEfficient(conn, userKey);
-        if (identifier == null) {
-            return OpResult.fail("获取用户锁失败");
-        }
+//        String identifier = RedisLockUtil.tryAcquireEfficient(conn, userKey);
+//        if (identifier == null) {
+//            return OpResult.fail("获取用户锁失败");
+//        }
 
         try {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
             if (conn.exists(userKey)) {
                 return OpResult.fail("用户已存在");
             }
             conn.hmset(userKey, map);
             return OpResult.ok();
         } finally {
-            SimpleRedisLock.tryReleaseEfficient(conn, userKey, identifier);
+            lock.unlock();
+//            RedisLockUtil.tryReleaseEfficient(conn, userKey, identifier);
         }
 
     }
@@ -69,7 +76,7 @@ public class SimpleTradeSystem {
         }
 
         String inventoryKey = getInventoryKey(userId);
-        String idInventory = SimpleRedisLock.tryAcquireEfficient(conn, inventoryKey);
+        String idInventory = RedisLockUtil.tryAcquireEfficient(conn, inventoryKey);
         if (idInventory == null) {
             // 有人正在玩家操作仓库表
             return OpResult.fail("获取仓库锁失败");
@@ -81,7 +88,7 @@ public class SimpleTradeSystem {
             }
             return OpResult.fail("物品已在仓库中");
         } finally {
-            SimpleRedisLock.tryReleaseEfficient(conn, inventoryKey, idInventory);
+            RedisLockUtil.tryReleaseEfficient(conn, inventoryKey, idInventory);
         }
     }
 

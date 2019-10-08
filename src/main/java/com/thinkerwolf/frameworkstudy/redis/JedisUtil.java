@@ -28,4 +28,8 @@ public class JedisUtil {
         return objs.get(objs.size() - 1);
     }
 
+    public static Long getLongResult(Object result) {
+        return (Long) result;
+    }
+
 }
