@@ -1,3 +1,4 @@
+
 /*
  Navicat Premium Data Transfer
 
@@ -14,7 +15,6 @@
  Date: 13/10/2019 12:34:43
 */
 
-SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
@@ -88,7 +88,7 @@ CREATE TABLE `blog_scores`  (
   `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '',
   `create_time` datetime(0) NULL DEFAULT NULL,
   `Score` decimal(3, 2) NULL DEFAULT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of blog_scores
@@ -178,10 +178,10 @@ INSERT INTO `blog_scores` VALUES (17, 21, '攻壳机动队', '攻壳机动队 XX
 DROP TABLE IF EXISTS `employee`;
 CREATE TABLE `employee`  (
   `Id` int(11) NULL DEFAULT NULL,
-  `Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `Name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `Salary` int(11) NULL DEFAULT NULL,
   `ManagerId` int(11) NULL DEFAULT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of employee
@@ -197,9 +197,9 @@ INSERT INTO `employee` VALUES (4, 'Max', 90000, NULL);
 DROP TABLE IF EXISTS `log_partition`;
 CREATE TABLE `log_partition`  (
   `dt` datetime(0) NOT NULL,
-  `info` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `info` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   INDEX `dt`(`dt`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic PARTITION BY RANGE (year(`dt`))
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic PARTITION BY RANGE (year(`dt`))
 PARTITIONS 6
 (PARTITION `p0` VALUES LESS THAN (2005) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
 PARTITION `p1` VALUES LESS THAN (2006) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
@@ -221,7 +221,7 @@ DROP TABLE IF EXISTS `logs`;
 CREATE TABLE `logs`  (
   `Id` int(11) NULL DEFAULT NULL,
   `Num` int(11) NULL DEFAULT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of logs
@@ -241,7 +241,7 @@ DROP TABLE IF EXISTS `scores`;
 CREATE TABLE `scores`  (
   `Id` int(11) NULL DEFAULT NULL,
   `Score` decimal(3, 2) NULL DEFAULT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of scores

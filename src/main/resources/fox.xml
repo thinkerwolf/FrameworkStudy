@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:jms="http://www.springframework.org/schema/jms" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-4.3.xsd">
+
+    <bean id="provider" class="com.thinkerwolf.frameworkstudy.beans.NewsProvider">
+        <constructor-arg index="0" ref="newSource1"/>
+    </bean>
+
+    <!-- 静态工厂方法 -->
+    <bean id="newsSource" class="com.thinkerwolf.frameworkstudy.beans.NewsSourceFactory"
+          factory-method="getInstance">
+        <constructor-arg value="fox"/>
+    </bean>
+
+
+    <!-- 非静态工厂方法 -->
+    <bean id="newsSourceFactory" class="com.thinkerwolf.frameworkstudy.beans.NewsSourceFactory"/>
+    <bean id="newSource1" factory-bean="newsSourceFactory"
+          factory-method="getNewInstance">
+        <constructor-arg value="fox"/>
+    </bean>
+
+
+    <bean id="abstractNews" abstract="true">
+        <property name="title" value="Apolosis"/>
+       <!-- Exception <property name="nonexistes" value="iiii"/> -->
+    </bean>
+
+    <bean id="news" class="com.thinkerwolf.frameworkstudy.beans.News" scope="prototype" parent="abstractNews">
+        <constructor-arg index="0" value="1"/>
+        <constructor-arg index="1" value="2"/>
+        <constructor-arg index="2" value="3"/>
+    </bean>
+
+    <bean id="newsFactory"
+          class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+        <property name="targetBeanName">
+            <idref bean="news"/>
+        </property>
+    </bean>
+
+    <bean id="newsPersister" class="com.thinkerwolf.frameworkstudy.beans.NewsPersisterFactory"
+          factory-method="getInstance">
+        <constructor-arg value="fox"/>
+    </bean>
+
+
+</beans>

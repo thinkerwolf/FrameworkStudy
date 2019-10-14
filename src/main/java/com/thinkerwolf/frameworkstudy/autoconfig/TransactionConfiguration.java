@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Description;
+import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.inject.Inject;
@@ -24,6 +26,7 @@ public class TransactionConfiguration {
     JdbcProps props;
 
     @Bean("ds1")
+    @Description("The first datasourse")
     public AtomikosDataSourceBean getDataSourceFirst(@Value("${jdbc.xaDataSource}") String xaDataSourceClassName) {
         AtomikosDataSourceBean atomikosDataSourceBean = new AtomikosDataSourceBean();
         atomikosDataSourceBean.setUniqueResourceName("db1");
@@ -68,10 +71,9 @@ public class TransactionConfiguration {
     }
 
     @Bean("jtaTm")
-    public JtaTransactionManager getSpringTransactionManager(
-            @Qualifier("userTm") TransactionManager transactionManager) {
+    public JtaTransactionManager getSpringTransactionManager() {
         JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
-        jtaTransactionManager.setTransactionManager(transactionManager);
+        jtaTransactionManager.setTransactionManager(getUserTransactionManager());
         return jtaTransactionManager;
     }
 

@@ -9,6 +9,7 @@ import com.thinkerwolf.frameworkstudy.validation.Person;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.validation.Validator;
 
@@ -18,6 +19,7 @@ import javax.annotation.PreDestroy;
 @Configuration
 @EnableConfigurationProperties(HelloProperties.class)
 //@ConditionalOnClass(HelloService.class)
+//@Profile("development")
 public class HelloAutoConfiguration {
 
     @Bean
@@ -39,6 +41,8 @@ public class HelloAutoConfiguration {
         p.setName("Tom");
         return p;
     }
+
+
 
     @PostConstruct
     public void init() {

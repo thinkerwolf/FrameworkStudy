@@ -45,6 +45,9 @@ public class BeanFactoryStudy {
 		Runtime.getRuntime();
 	}
 
+
+
+
 	static void build(BeanDefinitionRegistry registry, BuildType type) {
 		switch (type) {
 		case CODE:
@@ -83,11 +86,11 @@ public class BeanFactoryStudy {
 
 	static void buildByProperities(BeanDefinitionRegistry registry) {
 		BeanDefinitionReader reader = new PropertiesBeanDefinitionReader(registry);
-		reader.loadBeanDefinitions(new ClassPathResource("com/example/demo/beans/fox.properities"));
+		reader.loadBeanDefinitions(new ClassPathResource("fox.properities"));
 	}
 
 	static void buildByXML(BeanDefinitionRegistry registry) {
 		BeanDefinitionReader reader = new XmlBeanDefinitionReader(registry);
-		reader.loadBeanDefinitions(new ClassPathResource("com/example/demo/beans/fox.xml"));
+		reader.loadBeanDefinitions(new ClassPathResource("fox.xml"));
 	}
 }
