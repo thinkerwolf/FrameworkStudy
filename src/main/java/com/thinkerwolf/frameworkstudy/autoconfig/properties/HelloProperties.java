@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.service;
+package com.thinkerwolf.frameworkstudy.autoconfig.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

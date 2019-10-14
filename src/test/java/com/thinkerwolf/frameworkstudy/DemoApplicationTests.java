@@ -1,17 +1,10 @@
 package com.thinkerwolf.frameworkstudy;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
 
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -20,19 +13,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.thinkerwolf.frameworkstudy.autoconfig.MessageSourceAutoConfiguration;
 import com.thinkerwolf.frameworkstudy.autoconfig.SendMailEventAutoConfig;
 import com.thinkerwolf.frameworkstudy.autoconfig.TransactionConfiguration;
 import com.thinkerwolf.frameworkstudy.event.SendMailService;
-import com.thinkerwolf.frameworkstudy.service.HelloProperties;
+import com.thinkerwolf.frameworkstudy.autoconfig.properties.HelloProperties;
 import com.thinkerwolf.frameworkstudy.service.HelloService;
 import com.thinkerwolf.frameworkstudy.service.HelloServiceImpl;
-
-import io.netty.channel.Channel;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -112,11 +101,11 @@ public class DemoApplicationTests {
 	@Configuration
 	@EnableConfigurationProperties(HelloProperties.class)
 	static class UserAutoConfiguration {
-
 		@Bean
 		public HelloService helloService() {
 			return new HelloServiceImpl("Hello", "jude ***");
 		}
 	}
+
 
 }

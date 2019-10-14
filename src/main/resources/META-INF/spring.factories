@@ -1,5 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.thinkerwolf.frameworkstudy.autoconfig.HelloAutoConfiguration,\
-															com.thinkerwolf.frameworkstudy.autoconfig.RpcAutoConfiguration,\
 															com.thinkerwolf.frameworkstudy.autoconfig.MessageSourceAutoConfiguration,\
 															com.thinkerwolf.frameworkstudy.autoconfig.SendMailEventAutoConfig,\
 															com.thinkerwolf.frameworkstudy.autoconfig.TransactionConfiguration
