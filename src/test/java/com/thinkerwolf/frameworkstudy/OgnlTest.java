@@ -28,12 +28,6 @@ public class OgnlTest {
 		System.out.println(Ognl.getValue("username$", map));
 	}
 	
-	public void test3() throws OgnlException {
-		//Ognl.setValue("username", root, value);
-		
-	}
-	
-	
 	class User {
 		private String username$;
 		private String password;
