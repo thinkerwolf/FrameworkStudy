@@ -34,7 +34,6 @@ public class HelloAutoConfiguration {
     }
 
     @Bean("person")
-    @Scope("prototype")
     Person getPerson() {
         Person p = new Person();
         p.setAge(120);

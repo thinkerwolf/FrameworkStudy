@@ -1,0 +1,94 @@
+<html>
+<head>
+    <title>chat</title>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script type='text/javascript' src='/dwr/engine.js'></script>
+    <script type='text/javascript' src='/dwr/util.js'></script>
+    <script type='text/javascript' src='https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js'></script>
+    <script type='text/javascript' src='/dwr/interface/RemoteFunctions.js'></script>
+    <script type='text/javascript' src='/dwr/interface/ChatManager.js'></script>
+
+    <script type='text/javascript'>
+        /**
+         * 注册帐号
+         */
+        function register(button) {
+            if ($('#username').val() == "" || $('#username').val().length <= 0) {
+                alert("请输入昵称");
+                return;
+            }
+
+
+            /* 下面是对一些按钮的禁用和激活操作 */
+            $('#username').disabled = true;
+            button.disabled = true;
+            $('#message').disabled = false;
+            $('#send').disabled = false;
+            $('#receiver').disabled = false;
+
+            /* 把我输入的用户名注册到服务器,并获得用户id(这里用session id 代替) */
+            ChatManager.updateUsersList($('#username').val(), true, function(data) {
+                if (data != null && data.length > 0) {
+                    // 注册成功,把userid放到当前页面
+                    console.log(data);
+                    $('#userid').val(data);
+                }
+            });
+        }
+
+
+
+        /**
+         * 发送消息
+         */
+        function send() {
+            var sender = dwr.util.getValue('username'); // 获得发送者名字
+            var receiver = dwr.util.getValue('receiver'); // 获得接受者id
+            var msg = dwr.util.getValue('message'); // 获得消息内容
+            ChatManager.send(sender, receiver, msg); // 发送消息
+        }
+
+        /**
+         * 页面初始化
+         */
+        function init() {
+            dwr.engine.setActiveReverseAjax(true); // 激活反转 重要
+            ChatManager.updateUsersList(null, false); // 当你打开界面的时候,先获得在线用户列表.
+        }
+        window.onload = init;//页面加载完毕后执行初始化方法init
+
+
+    </script>
+</head>
+<body>
+<input type="hidden" name="userid" id="userid"/>
+<br>
+昵称:
+<input type="text" name="username" id="username" />
+<input type="button" value="注册" onclick="register(this);"/>
+<br/>
+<br/>
+我要对
+<select name="receiver" id="receiver">
+</select>
+说:
+<input type="text" name="message" id="message"/>
+<input type="button" value="发送" id="send" name="send"
+       onclick="send();"/>
+<br/>
+<br/>
+在线用户列表:
+<ul id="users">
+</ul>
+
+<div id="showMessage" style="display:none">
+    <span id="sender"></span>对你说:
+    <span id="msg"></span>
+</div>
+
+
+</body>
+</html>

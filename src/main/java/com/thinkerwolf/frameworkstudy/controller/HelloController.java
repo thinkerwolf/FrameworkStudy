@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@Action
 public class HelloController {
 
     private static final String URL = "localhost:8080";

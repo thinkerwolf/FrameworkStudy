@@ -34,7 +34,6 @@ public class SimpleTradeSystem {
         Map<String, String> map = new HashMap<>(8, 1.0F);
         map.put("name", username);
         map.put("funds", String.valueOf(funds));
-
         RedisLock lock = new RedisLock(conn, "redislock:" + userKey);
         lock.lock();
         // 乐观锁
