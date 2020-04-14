@@ -23,7 +23,6 @@ public class RedisTests {
     private static Jedis conn;
     private static JedisPool jedisPool;
 
-
     @BeforeClass
     public static void beforeStart() {
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();

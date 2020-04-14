@@ -16,16 +16,12 @@ public class ThreadDeadLock {
         public void serviceA() {
             synchronized (lock1) {
                 String n = Thread.currentThread().getName();
-
                 System.out.println("Thread -> " + n + ", serviceA-AA");
-
                 synchronized (lock2) {
                     n = Thread.currentThread().getName();
                     System.out.println("Thread -> " + n + ", serviceA-BB");
                 }
-
             }
-
         }
 
         public void serviceB() {
@@ -39,7 +35,6 @@ public class ThreadDeadLock {
 
             }
         }
-
     }
 
 
@@ -48,10 +43,7 @@ public class ThreadDeadLock {
         Thread t1 = new Thread(() -> service.serviceA(), "A");
         Thread t2 = new Thread(() -> service.serviceB(), "B");
         t1.start();
-
         t2.start();
-
-
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
