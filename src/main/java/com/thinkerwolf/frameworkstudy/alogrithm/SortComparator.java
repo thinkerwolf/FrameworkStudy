@@ -11,32 +11,36 @@ import edu.princeton.cs.algs4.*;
  * @return
  */
 public class SortComparator {
+    private final static int INSERTION = 0, SELECTION = 1, SHELL = 2, MERGE = 3, QUICK = 4, HEAP = 5;
 
-    public static double time(String alg, Comparable[] a) {
+    public static double time(int alg, Comparable[] a) {
         Stopwatch sw = new Stopwatch();
-        if ("Insertion".equals(alg)) {
-            // 插入排序
-            Insertion.sort(a);
-        } else if ("Selection".equals(alg)) {
-            // 选择排序
-            Selection.sort(a);
-        } else if ("Shell".equals(alg)) {
-            // 希尔排序
-            Shell.sort(a);
-        } else if ("Merge".equals(alg)) {
-            // 归并排序
-            Merge.sort(a);
-        } else if ("Quick".equals(alg)) {
-            // 快速排序
-            Quick.sort(a);
-        } else if ("Heap".equals(alg)) {
-            // 堆排序
-            Heap.sort(a);
+        switch (alg) {
+            case INSERTION:
+                Insertion.sort(a);
+                break;
+            case SELECTION:
+                Selection.sort(a);
+                break;
+            case SHELL:
+                Shell.sort(a);
+                break;
+            case MERGE:
+                Merge.sort(a);
+                break;
+            case QUICK:
+                Quick.sort(a);
+                break;
+            case HEAP:
+                Heap.sort(a);
+                break;
+            default:
+                break;
         }
         return sw.elapsedTime();
     }
 
-    public static double timeRandomInput(String alg, int N, int T) {
+    public static double timeRandomInput(int alg, int N, int T) {
         // 使用算法1将T个长度为N的数组排序
         double total = 0.0;
         Double[] a = new Double[N];
@@ -50,7 +54,7 @@ public class SortComparator {
     }
 
     public static void main(String[] args) {
-        double insertionTime = timeRandomInput("Insertion", 10000, 100);
+        double insertionTime = timeRandomInput(INSERTION, 10000, 100);
         StdOut.printf("Insertion Time:%f", insertionTime);
     }
 }

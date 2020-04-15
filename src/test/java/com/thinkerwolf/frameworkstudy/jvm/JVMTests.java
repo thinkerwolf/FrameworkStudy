@@ -1,6 +1,8 @@
 package com.thinkerwolf.frameworkstudy.jvm;
 
+import com.thinkerwolf.frameworkstudy.common.Util;
 import org.junit.Test;
+import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -35,6 +37,17 @@ public class JVMTests {
     @Test
     public void newT() {
         i += 1;
+    }
+
+    @Test
+    public void unsafe() {
+        Unsafe unsafe = Util.getUnsafe();
+        long address = unsafe.allocateMemory(10);
+        unsafe.putByte(address, (byte) 1);
+        unsafe.putByte(address + 1, (byte) 2);
+        System.out.println(unsafe.getByte(address));
+        System.out.println(unsafe.getByte(address + 1));
+        unsafe.freeMemory(address);
     }
 
 

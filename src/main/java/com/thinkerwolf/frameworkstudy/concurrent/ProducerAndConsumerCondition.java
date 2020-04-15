@@ -23,29 +23,24 @@ public class ProducerAndConsumerCondition {
 
     public static void main(String[] args) {
         ProducerAndConsumerCondition pc = new ProducerAndConsumerCondition();
-        Thread p1 = new Thread(() -> {
-            pc.produce();
-        }, "p1");
-        Thread p2 = new Thread(() -> {
-            pc.produce();
-        }, "p2");
-        Thread c1 = new Thread(() -> {
-            pc.consume();
-        }, "c1");
-        Thread c2 = new Thread(() -> {
-            pc.consume();
-        }, "c2");
+        Thread p1;
+        p1 = new Thread(pc::produce, "p1");
+        Thread p2 = new Thread(pc::produce, "p2");
+        Thread c1 = new Thread(pc::consume, "c1");
+        Thread c2 = new Thread(pc::consume, "c2");
+        System.out.println("start .....");
         p1.start();
         p2.start();
         c1.start();
         c2.start();
-        System.out.println("start .....");
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        pc.stopProduce();
+
+
+//        try {
+//            Thread.sleep(4000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        pc.stopProduce();
     }
 
     private boolean checkConsumeStop() {
