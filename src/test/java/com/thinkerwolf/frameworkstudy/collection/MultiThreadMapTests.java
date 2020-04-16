@@ -4,6 +4,7 @@ import org.apache.commons.lang.time.StopWatch;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * 多线程下jdk不同map的执行效率
@@ -49,7 +50,7 @@ public class MultiThreadMapTests {
         for (Thread t : putThreads) {
             try {
                 t.join();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
         }
         final long putTime = sw.getTime();
@@ -62,7 +63,7 @@ public class MultiThreadMapTests {
         for (Thread t : getThreads) {
             try {
                 t.join();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
         }
 
@@ -73,6 +74,7 @@ public class MultiThreadMapTests {
         testMap(new Hashtable());
         testMap(Collections.synchronizedMap(new HashMap()));
         testMap(new ConcurrentHashMap());
+        testMap(new ConcurrentSkipListMap());
     }
 
     static class PutTask implements Runnable {
