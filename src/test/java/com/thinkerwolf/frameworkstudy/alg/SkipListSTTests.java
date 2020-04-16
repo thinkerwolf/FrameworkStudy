@@ -4,6 +4,7 @@ import com.thinkerwolf.frameworkstudy.alogrithm.table.SkipListST;
 import com.thinkerwolf.frameworkstudy.common.Util;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class SkipListSTTests {
     @Test
     public void testPut2() {
         SkipListST st = new SkipListST();
-        int max = 100;
+        int max = 200;
         Set<Integer> keySet = new LinkedHashSet<>();
         for (int i = 0; i < max; i++) {
             int key = Util.nextInt(max);
@@ -31,6 +32,10 @@ public class SkipListSTTests {
             st.put(key, "val" + key);
             System.out.println(st.printIdx());
         }
+        for (Integer key : keySet) {
+            System.out.printf("%d=%s, ", key, st.get(key));
+        }
+
         System.out.println(st);
 
     }

@@ -7,7 +7,7 @@ public class CacheLineTests {
     static T[] arr = new T[2];
     static {
         arr[0] = new T(); arr[1] = new T(); // no padding
-        arr[0] = new P(); arr[1] = new P(); // padding
+        //arr[0] = new P(); arr[1] = new P(); // padding
     }
     public static void main(String[] args) throws InterruptedException {
         long start = System.currentTimeMillis();

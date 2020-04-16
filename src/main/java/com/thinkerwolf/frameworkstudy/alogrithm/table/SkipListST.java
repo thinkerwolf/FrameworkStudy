@@ -37,7 +37,7 @@ public class SkipListST<K, V> implements ST<K, V> {
         if (value == null) {
             throw new NullPointerException();
         }
-        Node<K, V> newNode = null;
+        Node<K, V> z;
         for (Node<K, V> b = findPredecessor(key), n = b.next; ; ) {
             if (n != null) {
                 int cmp = cmpx(comparator, key, n.getKey());
@@ -51,8 +51,8 @@ public class SkipListST<K, V> implements ST<K, V> {
                     continue;
                 }
             }
-            newNode = new Node<>(key, value, n);
-            b.next = newNode;
+            z = new Node<>(key, value, n);
+            b.next = z;
             break;
         }
 
@@ -69,13 +69,13 @@ public class SkipListST<K, V> implements ST<K, V> {
             Index<K, V> idx = null;
             if (level <= max) { // 不增加高度，但是将新增节点延申出来索引
                 for (int i = 1; i <= level; i++) {
-                    idx = new Index<>(newNode, null, idx);
+                    idx = new Index<>(z, null, idx);
                 }
             } else {
                 // add new level
                 level = max + 1;
                 for (int i = 1; i <= level; i++) {
-                    idx = new Index<>(newNode, null, idx);
+                    idx = new Index<>(z, null, idx);
                 }
                 HeadIndex<K, V> hidx = h;
                 for (int l = max + 1; l <= level; l++) {
@@ -123,30 +123,24 @@ public class SkipListST<K, V> implements ST<K, V> {
         if (key == null) {
             throw new NullPointerException();
         }
-        Index<K, V> p = head;
-        for (Index<K, V> c = p.right; c != null; c = p.right) {
-            K inK = c.node.getKey();
-            int cmp = cmpx(comparator, key, inK);
-            if (cmp == 0) {
-                return c.node;
-            }
-            if (cmp > 0) {
-                if (c.right == null) {
-                    if (c.down == null) {
-                        break;
-                    }
-                    p = c.down;
-                } else {
-                    p = c;
+        final Comparator<K> cmp = this.comparator;
+        for (Index<K, V> q = head, r = q.right, d;;) {
+            if (r != null) {
+                Node<K, V> n = r.node;
+                K k = n.getKey();
+                if (cmpx(cmp, key, k) > 0) {
+                    q = r;
+                    r = r.right;
+                    continue;
                 }
-            } else {
-                if (p.down == null) {
-                    break;
-                }
-                p = p.down;
             }
+            d = q.down;
+            if (d == null) {
+                return q.node;
+            }
+            q = d;
+            r = q.right;
         }
-        return p.node;
     }
 
     private void casHead(HeadIndex<K, V> except, HeadIndex<K, V> update) {
