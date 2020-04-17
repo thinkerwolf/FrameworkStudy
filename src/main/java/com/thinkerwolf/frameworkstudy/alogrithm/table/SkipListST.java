@@ -167,7 +167,48 @@ public class SkipListST<K, V> implements ST<K, V> {
 
     @Override
     public V delete(K key) {
+        for (Node<K, V> b = findPredecessor(key), n = b.next; ; ) {
+            if (n != null) {
+                int cmp = cmpx(comparator, key, n.getKey());
+                if (cmp == 0) {
+                    V oldV = n.getValue();
+                    // 找到节点并删除
+                    b.next = n.next;
+                    n.next = null;
+                    // 索引删除
+                    HeadIndex h = head;
+                    for (; h != null; h = (HeadIndex) h.down) {
+                        for (Index<K, V> p = h, r = p.right; r != null; ) {
+                            if (cmpx(comparator, key, r.node.getKey()) == 0) {
+                                p.right = r.right;
+                                r.right = null;
+                                break;
+                            }
+                            p = r;
+                            r = p.right;
+                        }
+                    }
+                    tryReduceLevel();
+                    return oldV;
+                } else if (cmp > 0) {
+                    b = n;
+                    n = b.next;
+                    continue;
+                }
+                break;
+            }
+        }
         return null;
+    }
+
+    private void tryReduceLevel() {
+        if (head.right == null) {
+            if (head.level > 1) {
+                HeadIndex d = (HeadIndex) head.down;
+                head.down = null;
+                casHead(head, d);
+            }
+        }
     }
 
     @Override

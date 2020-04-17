@@ -157,6 +157,11 @@ public class Util {
         pw.flush();
     }
 
+    public static void printf(String format, Object... args) {
+        pw.printf(format, args);
+        pw.flush();
+    }
+
     public static void print() {
         pw.flush();
     }

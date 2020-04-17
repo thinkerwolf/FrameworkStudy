@@ -1,7 +1,8 @@
 package com.thinkerwolf.frameworkstudy.alg;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.table.SkipListST;
-import com.thinkerwolf.frameworkstudy.common.Util;
+
+import static com.thinkerwolf.frameworkstudy.common.Util.*;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -26,18 +27,28 @@ public class SkipListSTTests {
         SkipListST st = new SkipListST();
         int max = 200;
         Set<Integer> keySet = new LinkedHashSet<>();
+        println("Test put ====================== ");
         for (int i = 0; i < max; i++) {
-            int key = Util.nextInt(max);
+            int key = nextInt(max);
             keySet.add(key);
             st.put(key, "val" + key);
-            System.out.println(st.printIdx());
+            println(st.printIdx());
         }
+        println(st);
+
+        println("\nTest get ====================== ");
         for (Integer key : keySet) {
-            System.out.printf("%d=%s, ", key, st.get(key));
+            printf("%d=%s, ", key, st.get(key));
         }
+        println();
 
-        System.out.println(st);
+        println("\nTest remove ====================== ");
+        for (Integer key : keySet) {
+            printf("%d=%s, ", key, st.delete(key));
+        }
+        println();
 
+        println(st.printIdx());
     }
 
 }
