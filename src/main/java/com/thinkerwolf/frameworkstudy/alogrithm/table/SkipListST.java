@@ -189,6 +189,7 @@ public class SkipListST<K, V> implements ST<K, V> {
                         }
                     }
                     tryReduceLevel();
+                    size--;
                     return oldV;
                 } else if (cmp > 0) {
                     b = n;
