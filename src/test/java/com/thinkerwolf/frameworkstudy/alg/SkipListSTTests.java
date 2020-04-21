@@ -5,7 +5,6 @@ import com.thinkerwolf.frameworkstudy.alogrithm.table.SkipListST;
 import static com.thinkerwolf.frameworkstudy.common.Util.*;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

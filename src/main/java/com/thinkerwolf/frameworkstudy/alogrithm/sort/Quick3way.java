@@ -7,7 +7,7 @@ import edu.princeton.cs.algs4.StdRandom;
  * 快速排序三路排序法（最佳快速排序？？）
  */
 public class Quick3way {
-    public static final void sort(Comparable[] a) {
+    public static final void sort(Comparable<?>[] a) {
         StdRandom.shuffle(a);
         sort(a, 0, a.length - 1);
         assert Util.isSorted(a);
