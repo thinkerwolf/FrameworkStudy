@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * @author wukai
  */
-public class Util {
+public final class Util {
 
     private static final String CHARSET_NAME = "UTF-8";
     static Random R = new Random();
@@ -27,39 +27,46 @@ public class Util {
         }
     }
 
-    public static final boolean less(Comparable v, Comparable w) {
+    public static boolean less(Comparable v, Comparable w) {
         return v.compareTo(w) < 0;
     }
 
-    public static final boolean less(Comparable[] a, int i, int j) {
+    public static boolean less(Object v, Object w) {
+        if (!(v instanceof Comparable) || !(w instanceof Comparable)) {
+            throw new IllegalArgumentException();
+        }
+        return less((Comparable) v, (Comparable) w);
+    }
+
+    public static boolean less(Comparable[] a, int i, int j) {
         return less(a[i], a[j]);
     }
 
-    public static final boolean equal(Comparable v, Comparable w) {
+    public static boolean equal(Comparable v, Comparable w) {
         return v.compareTo(w) == 0;
     }
 
-    public static final boolean equal(Object v, Object w) {
+    public static boolean equal(Object v, Object w) {
         return Objects.equals(v, w);
     }
 
-    public static final void exch(Comparable[] arr, int i, int j) {
+    public static void exch(Comparable[] arr, int i, int j) {
         Comparable t = arr[i];
         arr[i] = arr[j];
         arr[j] = t;
     }
 
-    public static final void exch(Object[] arr, int i, int j) {
+    public static void exch(Object[] arr, int i, int j) {
         Object t = arr[i];
         arr[i] = arr[j];
         arr[j] = t;
     }
 
-    public static final void show(Comparable[] a) {
+    public static void show(Comparable[] a) {
         System.out.println(Arrays.toString(a));
     }
 
-    public static final boolean isSorted(Comparable[] a) {
+    public static boolean isSorted(Comparable[] a) {
         for (int i = 1; i < a.length; i++) {
             if (less(a[i], a[i - 1])) {
                 return false;
@@ -68,7 +75,7 @@ public class Util {
         return true;
     }
 
-    public static final Comparable[] randomArray(int N) {
+    public static Comparable[] randomArray(int N) {
         Comparable[] a = new Comparable[N];
         for (int i = 0; i < N; i++) {
             a[i] = nextDouble();
@@ -76,7 +83,7 @@ public class Util {
         return a;
     }
 
-    public static final Comparable[] randomInt(int N) {
+    public static Comparable[] randomInt(int N) {
         Comparable[] a = new Comparable[N];
         for (int i = 0; i < N; i++) {
             a[i] = nextInt(30);
@@ -181,4 +188,14 @@ public class Util {
     public static Unsafe getUnsafe() {
         return unsafe;
     }
+
+    public static void joinQuietly(Thread t) {
+        try {
+            if (t.isAlive()) {
+                t.join();
+            }
+        } catch (InterruptedException ignored) {
+        }
+    }
+
 }

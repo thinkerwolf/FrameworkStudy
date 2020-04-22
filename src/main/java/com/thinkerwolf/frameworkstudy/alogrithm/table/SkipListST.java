@@ -25,6 +25,16 @@ public class SkipListST<K, V> implements ST<K, V> {
     private int size;
 
     public SkipListST() {
+        init();
+    }
+
+    public SkipListST(Comparator<K> comparator) {
+        this.comparator = comparator;
+        init();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void init() {
         this.head = new HeadIndex(new Node(null, DEFAULT_HEADER_VAL, null), null, null, 1);
     }
 
