@@ -55,6 +55,13 @@ public class Util {
         arr[j] = t;
     }
 
+    public static final void exch(int[] arr, int i, int j) {
+        int t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+    }
+
+
     public static final void show(Comparable[] a) {
         System.out.println(Arrays.toString(a));
     }

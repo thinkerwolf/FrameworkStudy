@@ -17,9 +17,9 @@ public class Quick3way {
         if (lo >= hi) {
             return;
         }
-        int lt = lo;
-        int gt = hi;
-        int i = lo + 1;
+        int lt = lo; // left
+        int gt = hi; // right
+        int i = lo + 1; // mid
         Comparable v = a[lo];
         while (i <= gt) {
             int cmp = a[i].compareTo(v);
@@ -32,7 +32,7 @@ public class Quick3way {
     }
 
     public static void main(String[] args) {
-        Comparable[] a = Util.randomArray(7);
+        Comparable[] a = Util.randomInt(20);
         sort(a);
         Util.show(a);
     }
