@@ -27,11 +27,18 @@ public class Util {
         }
     }
 
-    public static final boolean less(Comparable v, Comparable w) {
+    public static boolean less(Comparable v, Comparable w) {
         return v.compareTo(w) < 0;
     }
 
-    public static final boolean less(Comparable[] a, int i, int j) {
+    public static boolean less(Object v, Object w) {
+        if (!(v instanceof Comparable) || !(w instanceof Comparable)) {
+            throw new IllegalArgumentException();
+        }
+        return less((Comparable) v, (Comparable) w);
+    }
+
+    public static boolean less(Comparable[] a, int i, int j) {
         return less(a[i], a[j]);
     }
 

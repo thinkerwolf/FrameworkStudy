@@ -1,8 +1,12 @@
 package com.thinkerwolf.frameworkstudy.concurrent;
 
+import com.thinkerwolf.frameworkstudy.common.Util;
+
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TransferQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -20,10 +24,26 @@ public class WaitNotifyAlternatePrint {
 
     public static void main(String[] args) {
         WaitNotifyAlternatePrint p = new WaitNotifyAlternatePrint();
+
+        long start = System.currentTimeMillis();
         p.synchronizedPrint();
+        System.err.println("synchronizedPrint " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
         p.lockPrint();
+        System.err.println("lockPrint " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
         p.casPrint();
+        System.err.println("casPrint " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
         p.pipedPrint();
+        System.err.println("pipedPrint " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
+        p.transferQueuePrint();
+        System.err.println("transferQueuePrint " + (System.currentTimeMillis() - start));
     }
 
     public void synchronizedPrint() {
@@ -38,7 +58,7 @@ public class WaitNotifyAlternatePrint {
                         lock.notify();
                         try {
                             lock.wait();
-                        } catch (InterruptedException e) {
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -55,7 +75,7 @@ public class WaitNotifyAlternatePrint {
                         lock.notify();
                         try {
                             lock.wait();
-                        } catch (InterruptedException e) {
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -65,11 +85,8 @@ public class WaitNotifyAlternatePrint {
         });
         t1.start();
         t2.start();
-        try {
-            t1.join();
-            t2.join();
-        } catch (InterruptedException e) {
-        }
+        Util.joinQuietly(t1);
+        Util.joinQuietly(t2);
     }
 
     public void lockPrint() {
@@ -85,7 +102,7 @@ public class WaitNotifyAlternatePrint {
                     c2.signal();
                     try {
                         c1.await();
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignored) {
                     }
                 }
                 c2.signal();
@@ -102,7 +119,7 @@ public class WaitNotifyAlternatePrint {
                     c1.signal();
                     try {
                         c2.await();
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignored) {
                     }
                 }
                 c1.signal();
@@ -112,11 +129,8 @@ public class WaitNotifyAlternatePrint {
         });
         t1.start();
         t2.start();
-        try {
-            t1.join();
-            t2.join();
-        } catch (InterruptedException e) {
-        }
+        Util.joinQuietly(t1);
+        Util.joinQuietly(t2);
     }
 
     public void casPrint() {
@@ -147,11 +161,8 @@ public class WaitNotifyAlternatePrint {
         });
         t1.start();
         t2.start();
-        try {
-            t1.join();
-            t2.join();
-        } catch (InterruptedException e) {
-        }
+        Util.joinQuietly(t1);
+        Util.joinQuietly(t2);
     }
 
     public void pipedPrint() {
@@ -171,12 +182,12 @@ public class WaitNotifyAlternatePrint {
             for (char c : ca1) {
                 try {
                     input1.read();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
                 System.out.println(n + ":" + c);
                 try {
                     output1.write(1);
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             }
         });
@@ -184,22 +195,55 @@ public class WaitNotifyAlternatePrint {
             String n = Thread.currentThread().getName();
             try {
                 output2.write(2);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
             for (char c : ca2) {
                 try {
                     input2.read();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
                 System.out.println(n + ":" + c);
                 try {
                     output2.write(2);
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             }
         });
         t1.start();
         t2.start();
+        Util.joinQuietly(t1);
+        Util.joinQuietly(t2);
+    }
+
+    public void transferQueuePrint() {
+        TransferQueue<Character> transfer1 = new LinkedTransferQueue<>();
+        TransferQueue<Character> transfer2 = new LinkedTransferQueue<>();
+        Thread t1 = new Thread(() -> {
+            String n = Thread.currentThread().getName();
+            for (char c : ca2) {
+                try {
+                    transfer2.put(c);
+                    char ch = transfer1.take();
+                    System.out.println(n + ":" + ch);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        });
+        Thread t2 = new Thread(() -> {
+            String n = Thread.currentThread().getName();
+            for (char c : ca1) {
+                try {
+                    char ch = transfer2.take();
+                    System.out.println(n + ":" + ch);
+                    transfer1.put(c);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        });
+        t1.start();
+        t2.start();
+        Util.joinQuietly(t1);
+        Util.joinQuietly(t2);
     }
 
 }
