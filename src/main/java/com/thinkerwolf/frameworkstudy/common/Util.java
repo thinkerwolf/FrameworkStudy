@@ -18,12 +18,22 @@ public class Util {
     private static final String CHARSET_NAME = "UTF-8";
     static Random R = new Random();
     static PrintWriter pw;
+    private static Unsafe unsafe;
 
     static {
         try {
             pw = new PrintWriter(new OutputStreamWriter(System.out, CHARSET_NAME), true);
         } catch (UnsupportedEncodingException e) {
             System.out.println(e);
+        }
+    }
+
+    static {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            unsafe = (Unsafe) f.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
         }
     }
 
@@ -67,7 +77,6 @@ public class Util {
         arr[i] = arr[j];
         arr[j] = t;
     }
-
 
     public static final void show(Comparable[] a) {
         System.out.println(Arrays.toString(a));
@@ -180,19 +189,18 @@ public class Util {
         pw.flush();
     }
 
-
-    private static Unsafe unsafe;
-
-    static {
-        try {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            unsafe = (Unsafe) f.get(null);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-        }
-    }
-
     public static Unsafe getUnsafe() {
         return unsafe;
     }
+
+    public static void joinQuietly(Thread t) {
+        if (t.isAlive()) {
+            try {
+                t.join();
+            } catch (InterruptedException ignored) {
+                // Ignore this exception
+            }
+        }
+    }
+
 }

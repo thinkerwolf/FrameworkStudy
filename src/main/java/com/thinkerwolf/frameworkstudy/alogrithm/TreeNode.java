@@ -1,7 +1,7 @@
 package com.thinkerwolf.frameworkstudy.alogrithm;
 
 public class TreeNode {
-    public int val;
+    public Object val;
     public TreeNode left;
     public TreeNode right;
 

@@ -19,7 +19,7 @@ public class LeetcodeBasicArrayTests {
     private static final int M = 10;
 
     @Test
-    public void quickSortTest() {
+    public void testQuickSort() {
         int[] nums = new int[]{7, 1, 5, 3, 6, 4, 14, 1, 2, 18, 10, 16, 9, 8};
         StdRandom.shuffle(nums);
         insertSort(nums, 0, nums.length - 1);
@@ -41,7 +41,7 @@ public class LeetcodeBasicArrayTests {
     }
 
     @Test
-    public void removeDuplicatesTest() {
+    public void testRemoveDuplicates() {
         int[] nums = new int[]{0, 0, 1, 1, 1, 2, 2, 3, 3, 4};
         //nums = new int[]{1, 1};
         int len = removeDuplicates(nums);
@@ -49,7 +49,7 @@ public class LeetcodeBasicArrayTests {
     }
 
     @Test
-    public void maxProfitTest() {
+    public void testMaxProfit() {
         int[] prices = new int[]{7, 1, 5, 3, 6, 4};
         prices = new int[]{1, 2, 3, 4, 5};
         int p = maxProfit(prices);
@@ -57,7 +57,7 @@ public class LeetcodeBasicArrayTests {
     }
 
     @Test
-    public void rotateTest() {
+    public void testRotate() {
         int[] nums = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         int k = 3;
         rotate(nums, k);
@@ -65,18 +65,38 @@ public class LeetcodeBasicArrayTests {
     }
 
     @Test
-    public void singleNumberTest() {
+    public void testSingleNumber() {
         int[] nums = new int[]{2, 2, 1};
         System.out.println(singleNumber(nums));
     }
 
     @Test
-    public void intersectTest() {
+    public void testIntersect() {
 //        int[] nums1 = new int[]{1, 2, 4, 5, 7};
 //        int[] nums2 = new int[]{9, 4, 5};
         int[] nums1 = new int[]{4, 9, 5};
         int[] nums2 = new int[]{9, 4, 9, 8, 4};
         System.out.printf("Nums %s\n", Arrays.toString(intersect(nums1, nums2)));
+    }
+
+    @Test
+    public void testPlusOne() {
+        int[] a = new int[]{1, 1, 2, 4};
+        System.out.printf("Nums %s\n", Arrays.toString(plusOne(a)));
+        a = new int[]{0};
+        System.out.printf("Nums %s\n", Arrays.toString(plusOne(a)));
+        a = new int[]{9, 9, 9};
+        System.out.printf("Nums %s\n", Arrays.toString(plusOne(a)));
+    }
+
+    @Test
+    public void testMoveZeros() {
+        int[] a = new int[]{1, 2, 3, 0, 0, 4};
+        moveZeros(a);
+        System.out.printf("Nums %s\n", Arrays.toString(a));
+        a = new int[]{1, 2, 3, 0, 0, 4};
+        moveZeros2(a);
+        System.out.printf("Nums %s\n", Arrays.toString(a));
     }
 
     /**
@@ -305,6 +325,9 @@ public class LeetcodeBasicArrayTests {
      * <a href="https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/26/">两个数组的交集</a>
      */
     public int[] intersect(int[] nums1, int[] nums2) {
+        // 方案1 : 排序后查找
+        // 时间复杂度 O(N1logN1 + N2logN2 + (N1+N2)/2)
+        // 空间复杂度 O(min(N1, N2))
         if (nums1.length > nums2.length) {
             int[] t = nums1;
             nums1 = nums2;
@@ -313,28 +336,33 @@ public class LeetcodeBasicArrayTests {
         int size = 0;
         int[] res;
         int i = 0, j = 0;
-        // 方案1 : 排序后查找
-        // 时间复杂度 O(N1logN1 + N2logN2 + (N1+N2)/2)
-        // 空间复杂度 O(min(N1, N2))
-//        Arrays.sort(nums1);
-//        Arrays.sort(nums2);
-//        res = new int[nums1.length];
-//        for (; i < nums1.length && j < nums2.length;) {
-//            if (nums1[i] == nums2[j]) {
-//                res[size++] = nums1[i];
-//                i++;
-//                j++;
-//            } else if (nums1[i] > nums2[j]) {
-//                j++;
-//            } else {
-//                i++;
-//            }
-//        }
-//        if (size < res.length) {
-//            return Arrays.copyOf(res, size);
-//        }
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        res = new int[nums1.length];
+        for (; i < nums1.length && j < nums2.length; ) {
+            if (nums1[i] == nums2[j]) {
+                res[size++] = nums1[i];
+                i++;
+                j++;
+            } else if (nums1[i] > nums2[j]) {
+                j++;
+            } else {
+                i++;
+            }
+        }
+        return Arrays.copyOf(res, size);
+    }
 
+    public int[] intersect2(int[] nums1, int[] nums2) {
         // 方案2: 使用map
+        if (nums1.length > nums2.length) {
+            int[] t = nums1;
+            nums1 = nums2;
+            nums2 = t;
+        }
+        int size = 0;
+        int[] res;
+        int i = 0, j = 0;
         Map<Integer, Integer> map1 = new HashMap<>();
         for (i = 0; i < nums1.length; i++) {
             map1.compute(nums1[i], (key, old) -> {
@@ -365,6 +393,68 @@ public class LeetcodeBasicArrayTests {
             }
         }
         return Arrays.copyOf(res, size);
+    }
+
+
+    /**
+     * 数组组成的十进制数加1
+     * <a href="https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/26/">数组加1</a>
+     */
+    public int[] plusOne(int[] digits) {
+        int f = 1;
+        for (int i = digits.length - 1; i >= 0; i--) {
+            int n = digits[i] + f;
+            digits[i] = n % 10;
+            f = n / 10;
+            if (f < 1) {
+                break;
+            }
+        }
+        if (f > 0) {
+            int[] res = new int[digits.length + 1];
+            System.arraycopy(digits, 0, res, 1, digits.length);
+            res[0] = f;
+            return res;
+        }
+        return digits;
+    }
+
+    /**
+     * 原地操作，不适用额外空间。
+     * 尽量减少操作次数
+     * <a href="https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/27/">0移动到右边</a>
+     */
+    public void moveZeros(int[] nums) {
+        // 方案1 暴力法，遇到一个0就往右移动一个
+        if (nums.length < 2) return;
+        int s = 0;
+        int e = nums.length;
+        for (; s < e; ) {
+            if (nums[s] == 0) {
+                System.arraycopy(nums, s + 1, nums, s, e - s - 1);
+                nums[e - 1] = 0;
+                e--;
+            } else {
+                s++;
+            }
+        }
+    }
+
+    public void moveZeros2(int[] nums) {
+        // 方案2 双指针法
+        if (nums == null || nums.length < 2) return;
+        int i = 0;
+        int j = 0;
+        for (; i < nums.length && j < nums.length; ) {
+            if (nums[i] != 0 && nums[j] == 0) {
+                nums[j] = nums[i];
+                nums[i] = 0;
+            }
+            i++;
+            if (nums[j] != 0) {
+                j++;
+            }
+        }
     }
 
 }
