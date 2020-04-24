@@ -50,5 +50,10 @@ public class JVMTests {
         unsafe.freeMemory(address);
     }
 
+    @Test
+    public void testChar() {
+        System.out.println((int) '0');
+    }
+
 
 }

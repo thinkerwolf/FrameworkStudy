@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
@@ -24,16 +25,14 @@ public class Util {
         try {
             pw = new PrintWriter(new OutputStreamWriter(System.out, CHARSET_NAME), true);
         } catch (UnsupportedEncodingException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
-    }
-
-    static {
         try {
             Field f = Unsafe.class.getDeclaredField("theUnsafe");
             f.setAccessible(true);
             unsafe = (Unsafe) f.get(null);
         } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 

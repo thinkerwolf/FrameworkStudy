@@ -99,6 +99,37 @@ public class LeetcodeBasicArrayTests {
         System.out.printf("Nums %s\n", Arrays.toString(a));
     }
 
+    @Test
+    public void testIsValidSudoku() {
+        char[][] board = new char[][]{
+                {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
+                {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
+                {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
+                {'8', '.', '.', '.', '6', '.', '.', '.', '3'},
+                {'4', '.', '.', '8', '.', '3', '.', '.', '1'},
+                {'7', '.', '.', '.', '2', '.', '.', '.', '6'},
+                {'.', '6', '.', '.', '.', '.', '2', '8', '.'},
+                {'.', '.', '.', '4', '1', '9', '.', '.', '5'},
+                {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
+        };
+        System.out.println(isValidSudoku(board));
+    }
+
+    @Test
+    public void testReverseMatrix() {
+        int[][] matrix = new int[][]{
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+//        transpostMatrix(matrix); // 矩阵转置
+//        System.out.printf("Transpose %s\n", Arrays.deepToString(matrix));
+//        reverseRowMatrix(matrix); // 反转行
+//        System.out.printf("Reverse Row %s \n", Arrays.deepToString(matrix));
+        rotate(matrix);
+        System.out.printf("Rotate %s \n", Arrays.deepToString(matrix));
+    }
+
     /**
      * 插入排序
      *
@@ -131,7 +162,7 @@ public class LeetcodeBasicArrayTests {
         if (l >= h) {
             return;
         }
-        int m = (h + l) / 2;
+        final int m = (h + l) / 2;
         mergeSort(a, aux, l, m);
         mergeSort(a, aux, m + 1, h);
         if (a[m] > a[m + 1]) {
@@ -259,14 +290,7 @@ public class LeetcodeBasicArrayTests {
         if (k <= 0 || nums.length < 2) {
             return;
         }
-        // 方案1：一步步右移时间复杂度为O(k * (N - 1))
-//        int t;
-//        for (int i = 0; i < k; i++) {
-//            t = nums[nums.length - 1];
-//            System.arraycopy(nums, 0, nums, 1, nums.length - 1);
-//            nums[0] = t;
-//        }
-        // 方案2：先通过交换左滑k个数量，遇到交换数量不足时逐个右移动
+        // 方案1：先通过交换左滑k个数量，遇到交换数量不足时逐个右移动
         int i, j, t;
         for (i = nums.length - 1; i - k + 1 >= k; ) {
             for (j = 0; j < k; j++) {
@@ -284,6 +308,20 @@ public class LeetcodeBasicArrayTests {
             }
         }
     }
+
+    public void rotate1(int[] nums, int k) {
+        if (k <= 0 || nums.length < 2) {
+            return;
+        }
+        // 方案2：一步步右移时间复杂度为O(k * (N - 1))
+        int t;
+        for (int i = 0; i < k; i++) {
+            t = nums[nums.length - 1];
+            System.arraycopy(nums, 0, nums, 1, nums.length - 1);
+            nums[0] = t;
+        }
+    }
+
 
     /**
      * <a href="https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/24/">是否包含重复数字</a>
@@ -456,5 +494,83 @@ public class LeetcodeBasicArrayTests {
             }
         }
     }
+
+    /**
+     * 9 x 9
+     * <a href="https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/30/">有效的数独</a>
+     */
+    public boolean isValidSudoku(char[][] board) {
+        // 0, 0  0, 3   0, 6
+        // 3, 0  3, 3   3, 6
+        final char empty = '.';
+        Map<Integer, Integer>[] rows = new HashMap[9];
+        Map<Integer, Integer>[] columns = new HashMap[9];
+        for (int i = 0; i < 9; i++) {
+            rows[i] = new HashMap<>();
+            columns[i] = new HashMap<>();
+        }
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int n = 0; n < 9; n++) {
+            int y = 3 * (n / 3); // 行
+            int x = 3 * (n % 3); // 列
+            for (int i = y; i < y + 3; i++) {
+                for (int j = x; j < x + 3; j++) {
+                    int c = (int) board[i][j];
+                    if (empty == c) {
+                        continue;
+                    }
+                    if (map.containsKey(c)) {
+                        return false;
+                    }
+                    rows[i].put(c, rows[i].getOrDefault(c, 0) + 1); // 行
+                    columns[j].put(c, columns[j].getOrDefault(c, 0) + 1); // 列
+                    if (rows[i].get(c) > 1 || columns[j].get(c) > 1) {
+                        return false;
+                    }
+                    map.put(c, 1);
+                }
+            }
+            map.clear();
+        }
+        return true;
+    }
+
+    /**
+     * n x n的矩阵旋转，原地交换，不可使用额外空间
+     * <a href="https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/31/">旋转矩阵</a>
+     */
+    public void rotate(int[][] matrix) {
+        // 先进行矩阵转置 A^T
+        transpostMatrix(matrix);
+        // 行反转
+        reverseRowMatrix(matrix);
+    }
+
+    /**
+     * 矩阵转置
+     */
+    private void transpostMatrix(int[][] matrix) {
+        // transpose matrix
+        int n = matrix.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                int tmp = matrix[j][i];
+                matrix[j][i] = matrix[i][j];
+                matrix[i][j] = tmp;
+            }
+        }
+    }
+
+    private void reverseRowMatrix(int[][] matrix) {
+        int n = matrix.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n / 2; j++) {
+                int tmp = matrix[i][j];
+                matrix[i][j] = matrix[i][n - j - 1];
+                matrix[i][n - j - 1] = tmp;
+            }
+        }
+    }
+
 
 }
