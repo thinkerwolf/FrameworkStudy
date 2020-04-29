@@ -12,7 +12,7 @@ import java.util.*;
  * @author wukai
  * @date 2020/4/23 10:34
  */
-public class LeetcodeBinaryTreeTests {
+public class LeetcodeBasicBinaryTreeTests {
 
     @Test
     public void testPreOrder() {
