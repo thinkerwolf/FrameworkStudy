@@ -1,12 +1,16 @@
-package com.thinkerwolf.frameworkstudy.common;
+package com.thinkerwolf.frameworkstudy.nio;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.PooledByteBufAllocator;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
@@ -15,36 +19,33 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class NioServer {
 
     private static Random random = new Random();
-
+    private NioLoop acceptLoop;
     private NioLoop[] nioLoops;
     private ServerSocketChannel serverCh;
-    private AcceptTask acceptTask;
+    private ByteBufAllocator allocator;
 
 
     public NioServer(int workerNum) throws IOException {
         this.nioLoops = new NioLoop[workerNum];
         for (int i = 0; i < workerNum; i++) {
-            nioLoops[i] = new NioLoop(Selector.open());
+            nioLoops[i] = new NioLoop("Worker-" + i, Selector.open());
         }
-        this.acceptTask = new AcceptTask(Selector.open());
+        this.acceptLoop = new NioLoop("Boss", Selector.open());
         this.serverCh = ServerSocketChannel.open();
         this.serverCh.configureBlocking(false);
+        this.allocator = new PooledByteBufAllocator(true);
     }
 
     public void bind(int port) throws IOException {
         this.serverCh.bind(new InetSocketAddress(port));
-        this.serverCh.register(acceptTask.selector, SelectionKey.OP_ACCEPT);
-        Thread bossThread = new Thread(this.acceptTask, "boss");
-        int pos = 0;
+        this.serverCh.register(acceptLoop.selector, SelectionKey.OP_ACCEPT);
         for (NioLoop nioLoop : nioLoops) {
-            Thread t = new Thread(nioLoop, "worker-" + pos);
-            pos++;
-            t.start();
+            nioLoop.start();
         }
-        bossThread.start();
+        acceptLoop.start();
     }
 
-    private void register(SelectionKey sk) {
+    private void handleAccept(SelectionKey sk) {
         final NioLoop loop = next();
         try {
             ServerSocketChannel serverSocketChannel = (ServerSocketChannel) sk.channel();
@@ -72,43 +73,21 @@ public class NioServer {
         return nioLoops[random.nextInt(nioLoops.length)];
     }
 
-    private class AcceptTask implements Runnable {
-
-        private Selector selector;
-
-        public AcceptTask(Selector selector) {
-            this.selector = selector;
-        }
-
-        @Override
-        public void run() {
-            for (; ; ) {
-                try {
-                    selector.select(200);
-                } catch (IOException ignored) {
-                }
-                Set<SelectionKey> sks = selector.selectedKeys();
-                for (SelectionKey sk : sks) {
-                    if (sk.isAcceptable()) {
-                        register(sk);
-                    }
-                }
-                sks.clear();
-            }
-        }
-    }
-
     private class NioLoop implements Runnable {
         private Selector selector;
 
-        private ByteBuffer buffer;
-
         private Queue<Runnable> tasks;
 
-        public NioLoop(Selector selector) {
+        private Thread thread;
+
+        public NioLoop(String name, Selector selector) {
             this.selector = selector;
-            this.buffer = ByteBuffer.allocateDirect(2048);
             this.tasks = new LinkedBlockingQueue<>();
+            this.thread = new Thread(this, name);
+        }
+
+        public void start() {
+            thread.start();
         }
 
         public void addTask(Runnable task) {
@@ -118,19 +97,20 @@ public class NioServer {
 
         @Override
         public void run() {
-
             for (; ; ) {
                 for (Runnable task = tasks.poll(); task != null; task = tasks.poll()) {
                     task.run();
                 }
                 try {
-                    selector.select(200);
+                    selector.select();
                 } catch (IOException ignored) {
                 }
                 Set<SelectionKey> sks = selector.selectedKeys();
                 for (SelectionKey sk : sks) {
-                    if (sk.isReadable()) {
-                        handleRead(sk, buffer);
+                    if (sk.isAcceptable()) {
+                        handleAccept(sk);
+                    } else if (sk.isReadable()) {
+                        handleRead(sk);
                     } else if (sk.isWritable()) {
 
                     }
@@ -141,27 +121,28 @@ public class NioServer {
     }
 
 
-    private void handleRead(SelectionKey sk, ByteBuffer buf) {
+    private void handleRead(SelectionKey sk) {
         //buf.flip();
-        buf = ByteBuffer.allocate(1024);
+        ByteBuf buf = allocator.directBuffer(256);
         SocketChannel ch = (SocketChannel) sk.channel();
         int rd = 0;
         try {
-            rd = ch.read(buf);
-            buf.flip();
-            if (rd > 0) {
-                String s = new String(buf.array(), 0, rd);
+            for (; ; ) {
+                rd = buf.writeBytes(ch, buf.writableBytes());
+                if (rd <= 0) {
+                    break;
+                }
+                CharSequence s = buf.getCharSequence(0, rd, Charset.defaultCharset());
                 System.out.println(s);
             }
         } catch (IOException e) {
             try {
                 ch.close();
-                sk.cancel();
             } catch (IOException e1) {
             }
-
+        } finally {
+            buf.release();
         }
-
     }
 
     public static void main(String[] args) throws IOException {
