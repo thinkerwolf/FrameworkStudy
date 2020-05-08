@@ -51,7 +51,7 @@ public class NioServer {
             ServerSocketChannel serverSocketChannel = (ServerSocketChannel) sk.channel();
             final SocketChannel ch = serverSocketChannel.accept();
             if (ch != null) {
-                loop.addTask(new Runnable() {
+                Runnable run = new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -61,7 +61,12 @@ public class NioServer {
                         } catch (IOException e) {
                         }
                     }
-                });
+                };
+                if (Thread.currentThread() == loop.thread) {
+                    run.run();
+                } else {
+                    loop.addTask(run);
+                }
             }
         } catch (IOException e) {
         }
