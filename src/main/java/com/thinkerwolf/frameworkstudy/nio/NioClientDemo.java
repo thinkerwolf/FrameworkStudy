@@ -12,7 +12,7 @@ import java.util.Iterator;
 /**
  *
  */
-public class NioClient {
+public class NioClientDemo {
     private static final String host = "127.0.0.1";
     private static final int port = 8088;
     private Selector selector;
@@ -22,7 +22,7 @@ public class NioClient {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    NioClient client = new NioClient();
+                    NioClientDemo client = new NioClientDemo();
                     client.connect(host, port);
                     client.listen();
                 }

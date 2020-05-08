@@ -6,11 +6,7 @@ import io.netty.buffer.PooledByteBufAllocator;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
+import java.nio.channels.*;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
@@ -24,25 +20,55 @@ public class NioServer {
     private ServerSocketChannel serverCh;
     private ByteBufAllocator allocator;
 
+    private ChannelInitializer initializer;
 
-    public NioServer(int workerNum) throws IOException {
-        this.nioLoops = new NioLoop[workerNum];
-        for (int i = 0; i < workerNum; i++) {
-            nioLoops[i] = new NioLoop("Worker-" + i, Selector.open());
+    public NioServer(int workerNum) {
+        try {
+            this.nioLoops = new NioLoop[workerNum];
+            for (int i = 0; i < workerNum; i++) {
+                nioLoops[i] = new NioLoop("Worker-" + i, Selector.open());
+            }
+            this.acceptLoop = new NioLoop("Boss", Selector.open());
+            this.serverCh = ServerSocketChannel.open();
+            this.serverCh.configureBlocking(false);
+            this.allocator = new PooledByteBufAllocator(true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        this.acceptLoop = new NioLoop("Boss", Selector.open());
-        this.serverCh = ServerSocketChannel.open();
-        this.serverCh.configureBlocking(false);
-        this.allocator = new PooledByteBufAllocator(true);
     }
 
-    public void bind(int port) throws IOException {
-        this.serverCh.bind(new InetSocketAddress(port));
-        this.serverCh.register(acceptLoop.selector, SelectionKey.OP_ACCEPT);
-        for (NioLoop nioLoop : nioLoops) {
-            nioLoop.start();
+    public NioServer channelInitializer(ChannelInitializer initializer) {
+        this.initializer = initializer;
+        return this;
+    }
+
+    public void bind(int port) {
+        try {
+            this.serverCh.bind(new InetSocketAddress(port));
+            this.serverCh.register(acceptLoop.selector, SelectionKey.OP_ACCEPT);
+            for (NioLoop nioLoop : nioLoops) {
+                nioLoop.start();
+            }
+            acceptLoop.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        acceptLoop.start();
+    }
+
+
+    private void processSelectedKey(SelectionKey sk) {
+        Channel ch = sk.channel();
+        try {
+            if (sk.isAcceptable()) {
+                handleAccept(sk);
+            }
+            if (sk.isReadable()) {
+                handleRead(sk);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            NioUtils.closeChannel(ch);
+        }
     }
 
     private void handleAccept(SelectionKey sk) {
@@ -56,13 +82,17 @@ public class NioServer {
                     public void run() {
                         try {
                             ch.configureBlocking(false);
-                            ch.register(loop.selector, SelectionKey.OP_READ);
+                            DefaultChannelHandlerPipeline pipeline = new DefaultChannelHandlerPipeline(ch, allocator);
+                            if (initializer != null) {
+                                initializer.initChannel(pipeline);
+                            }
+                            ch.register(loop.selector, SelectionKey.OP_READ, pipeline);
                             System.out.println("Client register success " + ch.toString());
                         } catch (IOException e) {
                         }
                     }
                 };
-                if (Thread.currentThread() == loop.thread) {
+                if (loop.inLoop()) {
                     run.run();
                 } else {
                     loop.addTask(run);
@@ -70,12 +100,30 @@ public class NioServer {
             }
         } catch (IOException e) {
         }
-
-
     }
 
     private NioLoop next() {
         return nioLoops[random.nextInt(nioLoops.length)];
+    }
+
+    private void handleRead(SelectionKey sk) {
+        ByteBuf buf = allocator.directBuffer(256);
+        SocketChannel ch = (SocketChannel) sk.channel();
+        ChannelHandlerPipeline pipeline = (ChannelHandlerPipeline) sk.attachment();
+        int rd = 0;
+        try {
+            for (; ; ) {
+                rd = buf.writeBytes(ch, buf.writableBytes());
+                if (rd <= 0) {
+                    break;
+                }
+                pipeline.handleInbound(buf);
+            }
+        } catch (IOException e) {
+            NioUtils.closeChannel(ch);
+        } finally {
+            buf.release();
+        }
     }
 
     private class NioLoop implements Runnable {
@@ -95,6 +143,10 @@ public class NioServer {
             thread.start();
         }
 
+        public boolean inLoop() {
+            return Thread.currentThread() == thread;
+        }
+
         public void addTask(Runnable task) {
             this.tasks.add(task);
             selector.wakeup();
@@ -112,46 +164,10 @@ public class NioServer {
                 }
                 Set<SelectionKey> sks = selector.selectedKeys();
                 for (SelectionKey sk : sks) {
-                    if (sk.isAcceptable()) {
-                        handleAccept(sk);
-                    } else if (sk.isReadable()) {
-                        handleRead(sk);
-                    } else if (sk.isWritable()) {
-
-                    }
+                    processSelectedKey(sk);
                 }
                 sks.clear();
             }
         }
-    }
-
-
-    private void handleRead(SelectionKey sk) {
-        //buf.flip();
-        ByteBuf buf = allocator.directBuffer(256);
-        SocketChannel ch = (SocketChannel) sk.channel();
-        int rd = 0;
-        try {
-            for (; ; ) {
-                rd = buf.writeBytes(ch, buf.writableBytes());
-                if (rd <= 0) {
-                    break;
-                }
-                CharSequence s = buf.getCharSequence(0, rd, Charset.defaultCharset());
-                System.out.println(s);
-            }
-        } catch (IOException e) {
-            try {
-                ch.close();
-            } catch (IOException e1) {
-            }
-        } finally {
-            buf.release();
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
-        NioServer server = new NioServer(10);
-        server.bind(8088);
     }
 }
