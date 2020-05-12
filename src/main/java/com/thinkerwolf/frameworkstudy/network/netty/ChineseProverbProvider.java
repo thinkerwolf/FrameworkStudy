@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.netty.udp;
+package com.thinkerwolf.frameworkstudy.network.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;

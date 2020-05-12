@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.nio;
+package com.thinkerwolf.frameworkstudy.network.mynio;
 
 import io.netty.buffer.ByteBuf;
 
@@ -31,7 +31,7 @@ public class DefaultChannelHandlerContext implements ChannelHandlerContext {
         if (handler instanceof ChannelInboundHandler) {
             ((ChannelInboundHandler) handler).handleInbound(this, obj);
         } else {
-            sendInbound(obj);
+            fireInbound(obj);
         }
     }
 
@@ -40,19 +40,19 @@ public class DefaultChannelHandlerContext implements ChannelHandlerContext {
         if (handler instanceof ChannelOutboundHandler) {
             ((ChannelOutboundHandler) handler).handleOutbound(this, obj);
         } else {
-            sendOutbound(obj);
+            fireOutbound(obj);
         }
     }
 
     @Override
-    public void sendInbound(Object obj) {
+    public void fireInbound(Object obj) {
         if (next != null) {
             next.handleInbound(obj);
         }
     }
 
     @Override
-    public void sendOutbound(Object obj) {
+    public void fireOutbound(Object obj) {
         if (prev != null) {
             prev.handleOutbound(obj);
         } else {
@@ -84,7 +84,7 @@ public class DefaultChannelHandlerContext implements ChannelHandlerContext {
 
     @Override
     public void write(Object obj) {
-        pipeline.handleOutbound(obj);
+        pipeline.fireOutbound(obj);
     }
 
 

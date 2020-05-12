@@ -1,17 +1,27 @@
-package com.thinkerwolf.frameworkstudy.nio;
+package com.thinkerwolf.frameworkstudy.network.bio;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 
-public class SSLClient {
+/**
+ * SSLSocket 客户端
+ *
+ * @author wukai
+ * @date 2020/5/12 11:55
+ */
+public class SSLSocketClient {
 
     SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 
     private SSLSocket socket;
 
-    public SSLClient() throws IOException {
+    public SSLSocketClient() throws IOException {
         this.socket = (SSLSocket) sslSocketFactory.createSocket("127.0.0.1", 7070);
+    }
+
+    public static void main(String args[]) throws IOException {
+        new SSLSocketClient().connect();
     }
 
     public void connect() {
@@ -43,9 +53,5 @@ public class SSLClient {
         } finally {
             System.exit(0);
         }
-    }
-
-    public static void main(String args[]) throws IOException {
-        new SSLClient().connect();
     }
 }

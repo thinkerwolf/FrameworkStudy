@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.nio;
+package com.thinkerwolf.frameworkstudy.network.mynio;
 
 import io.netty.buffer.ByteBufAllocator;
 
@@ -17,9 +17,19 @@ public interface ChannelHandlerPipeline {
 
     void addFirst(String name, ChannelHandler handler);
 
-    void handleInbound(Object obj);
+    /**
+     * 从头开始处理Inbound信息
+     *
+     * @param obj
+     */
+    void fireInbound(Object obj);
 
-    void handleOutbound(Object obj);
+    /**
+     * 从头开始处理Outbound信息
+     *
+     * @param obj
+     */
+    void fireOutbound(Object obj);
 
     ByteBufAllocator allocator();
 

@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.nio;
+package com.thinkerwolf.frameworkstudy.network.mynio;
 
 import io.netty.buffer.ByteBufAllocator;
 
@@ -64,7 +64,7 @@ public class DefaultChannelHandlerPipeline implements ChannelHandlerPipeline {
     }
 
     @Override
-    public void handleInbound(Object obj) {
+    public void fireInbound(Object obj) {
         DefaultChannelHandlerContext ctx = headCtx;
         if (ctx != null) {
             ctx.handleInbound(obj);
@@ -72,7 +72,7 @@ public class DefaultChannelHandlerPipeline implements ChannelHandlerPipeline {
     }
 
     @Override
-    public void handleOutbound(Object obj) {
+    public void fireOutbound(Object obj) {
         DefaultChannelHandlerContext ctx = tailCtx;
         if (ctx != null) {
             ctx.handleOutbound(obj);
