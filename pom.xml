@@ -220,6 +220,11 @@
             <version>1.21</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.mangofactory</groupId>
+            <artifactId>swagger-springmvc</artifactId>
+            <version>1.0.2</version>
+        </dependency>
     </dependencies>
 
     <build>

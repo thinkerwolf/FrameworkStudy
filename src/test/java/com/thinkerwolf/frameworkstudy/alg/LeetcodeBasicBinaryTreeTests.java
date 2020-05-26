@@ -2,6 +2,7 @@ package com.thinkerwolf.frameworkstudy.alg;
 
 import com.thinkerwolf.frameworkstudy.alogrithm.TreeNode;
 import com.thinkerwolf.frameworkstudy.alogrithm.TreeNodeCodec;
+import com.thinkerwolf.frameworkstudy.common.Util;
 import org.junit.Test;
 
 import java.util.*;
@@ -131,6 +132,59 @@ public class LeetcodeBasicBinaryTreeTests {
                 curr = curr.right;
             }
         }
+    }
+
+    /**
+     * 验证二叉搜索树
+     *
+     * @param root
+     * @return
+     */
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        // 左中右，中序遍历
+        Deque<TreeNode> stack = new LinkedList<>();
+        TreeNode last = null;
+        TreeNode ct = root;
+        while (ct != null || !stack.isEmpty()) {
+            while (ct != null) {
+                stack.push(ct);
+                ct = ct.left;
+            }
+            TreeNode t = stack.pop();
+            if (last != null) {
+                if (!Util.less(last.val, t.val)) {
+                    return false;
+                }
+            }
+            last = t;
+            if (t.right != null) {
+                ct = t.right;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 对称二叉树 .不可使用遍历法，层序遍历？？？
+     *
+     * @param root
+     * @return
+     */
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        return isMirror(root.left, root.right);
+    }
+
+    private boolean isMirror(TreeNode t1, TreeNode t2) {
+        if (t1 == null && t2 == null) return true;
+        else if (t1 == null || t2 == null) return false;
+
+        return t1.val == t2.val && isMirror(t1.left, t2.right) && isMirror(t1.right, t2.left);
     }
 
 }
