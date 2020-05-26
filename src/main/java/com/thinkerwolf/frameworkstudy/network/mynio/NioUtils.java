@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.nio;
+package com.thinkerwolf.frameworkstudy.network.mynio;
 
 import java.io.IOException;
 import java.nio.channels.Channel;

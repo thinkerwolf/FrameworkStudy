@@ -1,11 +1,11 @@
-package com.thinkerwolf.frameworkstudy.nio;
+package com.thinkerwolf.frameworkstudy.network.bio;
 
 import java.io.*;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
-public class SSLServer {
+public class SSLSocketServer {
 
     // 服务器端授权的用户名和密码
     private static final String USER_NAME = "principal";
@@ -16,7 +16,7 @@ public class SSLServer {
 
     private SSLServerSocket serverSocket = null;
 
-    public SSLServer() throws Exception {
+    public SSLSocketServer() throws Exception {
         // 通过套接字工厂，获取一个服务器端套接字
         SSLServerSocketFactory socketFactory = (SSLServerSocketFactory)
                 SSLServerSocketFactory.getDefault();
@@ -61,7 +61,7 @@ public class SSLServer {
     }
 
     public static void main(String args[]) throws Exception {
-        SSLServer server = new SSLServer();
+        SSLSocketServer server = new SSLSocketServer();
         server.runServer();
     }
 }

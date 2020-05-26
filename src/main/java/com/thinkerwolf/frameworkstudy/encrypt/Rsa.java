@@ -35,9 +35,9 @@ public class Rsa {
         return kf.generatePrivate(spec);
     }
 
-    public static byte[] encrypt(byte[] data, PublicKey publicKey) throws Exception{
+    public static byte[] encrypt(byte[] data, Key key) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        cipher.init(Cipher.ENCRYPT_MODE, key);
         int inputLen = data.length;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int offSet = 0;
@@ -58,9 +58,9 @@ public class Rsa {
         return encodeData;
     }
 
-    public static byte[] decrypt(byte[] data, PrivateKey privateKey) throws Exception {
+    public static byte[] decrypt(byte[] data, Key key) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        cipher.init(Cipher.DECRYPT_MODE, key);
         data = Base64.getDecoder().decode(data);
         int inputLen = data.length;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -84,21 +84,20 @@ public class Rsa {
 
     public static void main(String[] args) {
         try {
-            // 生成公钥密钥
+            //1. Alice生成密钥对，公钥发给Bob
             KeyPair kp = generateKeyPair();
-            // 公钥密钥利用Base64编码生成公钥密钥字符串
+            //2. 对密钥对Base64编码变成字符串
             String publicKey = new String(Base64.getEncoder().encode(kp.getPublic().getEncoded()));
             String privateKey = new String(Base64.getEncoder().encode(kp.getPrivate().getEncoded()));
             System.out.printf("公钥：%s \n私钥：%s\n", publicKey, privateKey);
-            // 加密内容
-            byte[] content = "woshi".getBytes();
-            // 加密
-            byte[] encryptData = encrypt(content, getPublicKey(publicKey));
-            // 解密
-            byte[] decryptData = decrypt(encryptData, getPrivateKey(privateKey));
-            System.out.println(new String(decryptData));
 
-            // 签名
+            //3. 请求过程 Bob公钥加密，Alice私钥解密
+            byte[] request = "Bob request Alice".getBytes();
+            byte[] encryptRequest = encrypt(request, getPublicKey(publicKey));
+            byte[] decryptRequest = decrypt(encryptRequest, getPrivateKey(privateKey));
+            System.out.println(new String(decryptRequest));
+
+            //4. 响应过程
 
 
         }catch (Exception e) {

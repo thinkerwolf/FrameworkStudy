@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.nio;
+package com.thinkerwolf.frameworkstudy.network.mynio;
 
 
 import java.io.IOException;
@@ -23,23 +23,23 @@ public class NioClientDemo {
                 @Override
                 public void run() {
                     NioClientDemo client = new NioClientDemo();
-                    client.connect(host, port);
-                    client.listen();
+                    try {
+                        client.connect(host, port);
+                        client.listen();
+                    } catch (Exception e) {
+
+                    }
                 }
             }).start();
         }
     }
 
-    public void connect(String host, int port) {
-        try {
-            SocketChannel sc = SocketChannel.open();
-            sc.configureBlocking(false);
-            this.selector = Selector.open();
-            sc.register(selector, SelectionKey.OP_CONNECT);
-            sc.connect(new InetSocketAddress(host, port));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void connect(String host, int port) throws Exception {
+        SocketChannel sc = SocketChannel.open();
+        sc.configureBlocking(false);
+        this.selector = Selector.open();
+        sc.register(selector, SelectionKey.OP_CONNECT);
+        sc.connect(new InetSocketAddress(host, port));
     }
 
     public void listen() {
@@ -61,6 +61,8 @@ public class NioClientDemo {
                             socketChannel.configureBlocking(false);
                             socketChannel.register(selector, SelectionKey.OP_READ);
                             socketChannel.write(ByteBuffer.wrap(("Hello this is " + Thread.currentThread().getName()).getBytes()));
+
+
                         } else if (selectionKey.isReadable()) {
                             SocketChannel sc = (SocketChannel) selectionKey.channel();
                             ByteBuffer buffer = ByteBuffer.allocate(1024);

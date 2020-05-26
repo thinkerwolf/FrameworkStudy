@@ -1,4 +1,4 @@
-package com.thinkerwolf.frameworkstudy.nio;
+package com.thinkerwolf.frameworkstudy.network.mynio;
 
 /**
  * Down stream
