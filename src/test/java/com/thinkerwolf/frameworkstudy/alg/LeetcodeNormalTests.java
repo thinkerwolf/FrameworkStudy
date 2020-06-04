@@ -561,6 +561,27 @@ public class LeetcodeNormalTests {
         return new ArrayList<>(set);
     }
 
+    public int maxProfit(int[] prices) {
+        if (prices.length == 0) {
+            return 0;
+        }
+        int i = 0, j = prices.length - 1;
+        int minI = i, maxJ = j;
+        for (;i < maxJ && j > minI;) {
+            boolean bl = prices[i] < prices[minI];
+            boolean br = prices[j] > prices[maxJ];
+            if (bl) {
+                minI = i;
+            }
+            if (br) {
+                maxJ = j;
+            }
+            i++;
+            j--;
+        }
+        return Math.max(0, prices[maxJ] - prices[minI]);
+    }
+
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode ln1 = l1;
         ListNode ln2 = l2;

@@ -49,6 +49,16 @@ public class LeetcodeBasicBinaryTreeTests {
         System.out.println("Post Iteration " + list);
     }
 
+    @Test
+    public void testSortedArrayToBST() {
+        int[] nums = new int[]{-10, -3, 0, 5, 9};
+        TreeNode root = sortedArrayToBST(nums);
+
+        List<Object> list = new ArrayList<>();
+        inOrderRecursive(root, list);
+        System.out.println(list);
+    }
+
     /**
      * 前序遍历 根-左-右
      */
@@ -186,5 +196,27 @@ public class LeetcodeBasicBinaryTreeTests {
 
         return t1.val == t2.val && isMirror(t1.left, t2.right) && isMirror(t1.right, t2.left);
     }
+
+    /**
+     * 将有序数组转换为二叉搜索树
+     *
+     * @param nums
+     * @return
+     */
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return sortedArrayToBST0(nums, 0, nums.length - 1);
+    }
+
+    private TreeNode sortedArrayToBST0(int[] nums, int left, int right) {
+        if (left > right) {
+            return null;
+        }
+        int m = (left + right) / 2;
+        TreeNode root = new TreeNode(nums[m]);
+        root.left = sortedArrayToBST0(nums, left, m - 1);
+        root.right = sortedArrayToBST0(nums, m + 1, right);
+        return root;
+    }
+
 
 }
