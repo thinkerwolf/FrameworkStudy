@@ -242,6 +242,7 @@ public class LeetcodeBasicArrayTests {
      * <a href="https://leetcode-cn.com/explore/interview/card/top-interview-questions-easy/1/array/21/">移除排序数组中重复的元素</a>
      */
     public int removeDuplicates(int[] nums) {
+        /* 第一遍解法
         int rs = 0;
         final int max = nums.length;
         for (int i = 1; i < max; i++) {
@@ -256,7 +257,18 @@ public class LeetcodeBasicArrayTests {
         for (int i = max - rs; i < max; i++) {
             nums[i] = 0;
         }
-        return max - rs;
+        return max - rs;*/
+
+
+        /* 第二遍解法 */
+        int n = nums.length;
+        int idx = 1;
+        for (int i = 1; i < n; i++) {
+            if (nums[i - 1] != nums[i]) {
+                nums[idx++] = nums[i];
+            }
+        }
+        return idx;
     }
 
     /**
